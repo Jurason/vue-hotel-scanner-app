@@ -7,7 +7,7 @@
 				{{ location }}
 			</div>
 			<div class="main-board__header__right-block">
-				{{ checkInDate }}
+				{{ handledDate }}
 			</div>
 		</header>
 		<CarouselImages/>
@@ -49,10 +49,14 @@ export default {
 	props: {
 		hotelsList: {type: Array, required: true},
 		location: {type: String, required: true, default: 'Kyiv'},
-		checkInDate: {type: String, required: false},
+		checkInDate: {type: Object, required: false, default: '01 June 2022'},
 		favouriteCounter: {type: Number, required: true, default: 0}
 	},
-
+	computed: {
+		handledDate(){
+			return this.checkInDate ? this.dateFormatHandler(this.checkInDate) : ''
+		}
+	},
 	methods: {
 		addToFavourite(item){
 			this.$emit('add-to-favourite', item)
@@ -60,7 +64,12 @@ export default {
 		removeFromFavourite(item){
 			this.$emit('remove-from-favourite', item)
 		},
-	}
+		dateFormatHandler(date) {
+			const [month, day, year] = date.toDateString().split(' ').slice(1)
+			return `${day} ${month} ${year}`
+		},
+	},
+
 }
 </script>
 

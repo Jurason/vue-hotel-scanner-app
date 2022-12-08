@@ -1,18 +1,19 @@
 <template>
 	<div class="main__container">
 		<SearchBoard
-		@search-query="searchQueryHandler($event)"
+			@search-query="searchQueryHandler($event)"
 		/>
 		<MainBoard
-		@add-to-favourite="addToFavourite($event)"
-		@remove-from-favourite="removeFromFavourite($event)"
-		:favourite-counter="favouritesLength"
-		:hotels-list="listHotels"
-		:location="currentLocation"
-		:checkInDate="currentCheckInDate"/>
+			@add-to-favourite="addToFavourite($event)"
+			@remove-from-favourite="removeFromFavourite($event)"
+			:favourite-counter="favouritesLength"
+			:hotels-list="listHotels"
+			:location="currentLocation || ''"
+			:checkInDate="currentCheckInDate"
+		/>
 		<FavouritesBoard
-				:favourite-hotels="favorites"
-				@remove-from-favourite="removeFromFavourite($event)"
+			:favourite-hotels="favorites"
+			@remove-from-favourite="removeFromFavourite($event)"
 		/>
 	</div>
 </template>
@@ -21,7 +22,7 @@
 import SearchBoard from "./components/SearchBoard.vue";
 import FavouritesBoard from "./components/FavouritesBoard.vue";
 import MainBoard from './components/MainBoard/MainBoard.vue';
-import { getHotels, getLocationCity } from '../api.js'
+import { getHotels } from '../api.js'
 
 export default {
 	name: "MainView",
@@ -30,62 +31,64 @@ export default {
 		FavouritesBoard,
 		MainBoard
 	},
-	mounted(){
+	mounted() {
 		this.listHotels = JSON.parse(localStorage.getItem('hotels-list'))
 		this.favorites = JSON.parse(localStorage.getItem('favourite-list'))
-		this.currentCheckInDate = new Date()
-		this.currentCheckInDate = this.dateFormatHandler(this.currentCheckInDate)
+		this.currentLocation = this.$root.$data.initialState.location
+		this.currentCheckInDate = this.$root.$data.initialState.date
+		this.currentDays = this.$root.$data.initialState.days
 
-		this.itemHandler()
+		this.listHandler()
 	},
-	data(){
+	data() {
 		return {
 			listHotels: [],
 			favorites: [],
-			currentLocation: 'Kyiv', //привязать заполнение через геолокацию
+			currentLocation: null,
 			currentCheckInDate: null,
 			currentDays: 1
 		}
 	},
 	computed: {
-		favouritesLength(){
+		favouritesLength() {
 			return Number(this.favorites.length)
 		}
 	},
 	methods: {
-		addToFavourite(item){
+		addToFavourite(item) {
 			const copyItem = JSON.parse(JSON.stringify(item))
 			this.favorites.push(copyItem)
 		},
-		removeFromFavourite(item){
+		removeFromFavourite(item) {
 			this.favorites = this.favorites.filter(el => el.hotelId !== item.hotelId)
 			const itemToRemove = this.listHotels.find(el => el.hotelId === item.hotelId)
-			if(itemToRemove){
+			if (itemToRemove) {
 				itemToRemove.addedToFav = false
 			}
 		},
-		async searchQueryHandler(query){
-			const { location, checkIn, days } = query
+		async searchQueryHandler(query) {
+			const {location, checkIn, days} = query
 			this.currentLocation = location
 			this.currentCheckInDate = checkIn
 			this.currentDays = days
 			this.listHotels = await getHotels(query)
-			this.itemHandler()
+			this.listHandler()
 		},
-		itemHandler(){
+		listHandler() {
 			this.listHotels.forEach(hotel => Object.assign(hotel, {
-				checkInDate: this.currentCheckInDate,
+				checkInDate: this.dateFormatHandler(this.currentCheckInDate),
 				days: this.currentDays,
 				addedToFav: false,
 			}))
 		},
-		dateFormatHandler(date){
-			return date.toISOString().split('T')[0]
+		dateFormatHandler(date) {
+			const [month, day, year] = date.toDateString().split(' ').slice(1)
+			return `${day} ${month} ${year}`
 		},
-	},
-	watch: {
-		favouritesLength(){
-			localStorage.setItem('favourite-list', JSON.stringify(this.favorites))
+		watch: {
+			favouritesLength() {
+				localStorage.setItem('favourite-list', JSON.stringify(this.favorites))
+			}
 		}
 	}
 }

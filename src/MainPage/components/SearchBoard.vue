@@ -28,6 +28,8 @@
 <script>
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
+import { getLocationCity } from "../../api.js";
+
 export default {
 	name: "SearchBoard",
 	components: {
@@ -36,8 +38,10 @@ export default {
 	emits: {
 		'search-query': payload => typeof payload === 'object'
 	},
-	mounted(){
-		this.checkInDate = new Date()
+	async mounted(){
+		this.checkInDate = this.$root.$data.initialState.date
+		this.days = this.$root.$data.initialState.days
+		this.location = await getLocationCity()
 		Date.prototype.addDays = function(days) {
 			const date = new Date(this.valueOf());
 			date.setDate(date.getDate() + days);
@@ -46,7 +50,7 @@ export default {
 	},
 	data(){
 		return {
-			location: 'Kyiv',
+			location: null,
 			checkInDate: null,
 			days: 1,
 		}
@@ -63,14 +67,11 @@ export default {
 			}
 			const searchQuery = {
 				location: this.location,
-				checkIn: this.dateFormatHandler(this.checkInDate),
-				checkOut: this.dateFormatHandler(this.checkOutDate),
+				checkIn: this.checkInDate,
+				checkOut: this.checkOutDate,
 				days: this.days
 			}
 			this.$emit('search-query', searchQuery)
-		},
-		dateFormatHandler(date){
-			return date.toISOString().split('T')[0]
 		},
 	}
 }

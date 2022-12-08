@@ -3,22 +3,23 @@
 </template>
 <script>
 import { getLocationCity } from "./api.js";
+import axios from "axios";
 
 export default {
 	name: 'App',
-	mounted() {
-		// this.initialState.city = getLocationCity()
+	async mounted() {
+		this.initialState.date = new Date()
 	},
 	data(){
 		return {
 			initialState: {
-				city: 'Kyiv',
-
+				location: 'Kyiv',
+				date: null,
+				days: 2,
 			}
 		}
 	},
 	methods: {
-
 	}
 }
 </script>

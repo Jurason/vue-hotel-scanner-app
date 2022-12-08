@@ -84,18 +84,20 @@ export default {
 		},
 		filterRatingHandler(){
 			if(!this.filter.byRating.asc && !this.filter.byRating.desc){
-				this.filter.byRating.asc = !this.filter.byRating.asc
+				this.filter.byRating.asc = true
 				this.filter.byName.asc = false
 				this.filter.byName.desc = false
+				return
 			}
 			this.filter.byRating.asc = !this.filter.byRating.asc
 			this.filter.byRating.desc = !this.filter.byRating.desc
 		},
 		filterNameHandler(){
 			if(!this.filter.byName.asc && !this.filter.byName.desc){
-				this.filter.byName.asc = !this.filter.byName.asc
+				this.filter.byName.asc = true
 				this.filter.byRating.asc = false
 				this.filter.byRating.desc = false
+				return
 			}
 			this.filter.byName.asc = !this.filter.byName.asc
 			this.filter.byName.desc = !this.filter.byName.desc
