@@ -1,28 +1,77 @@
 <template>
 	<div class="login__backdrop"></div>
-	<div class="login__popup popup">
+	<form @submit.prevent="submitForm" autocomplete="off" class="login__popup popup">
 		<div class="popup__title">Simple Hotel Check</div>
 		<div class="popup__fields">
 			<div class="popup__field">
-				<div class="popup__field__title">Login</div>
-				<input type="text" class="popup__field__input">
+				<label :class="{'error-font' : !loginIsValid}" for="email" class="popup__field__title">Login</label>
+				<input v-model="login" id="email" type="text" class="popup__field__input">
+				<p v-if="!loginIsValid" class="error-message">Invalid email</p>
 			</div>
 			<div class="popup__field">
-				<div class="popup__field__title">Password</div>
-				<input type="text" class="popup__field__input">
+				<label :class="{'error-font' : !passwordIsValid}" for="pass" class="popup__field__title">Password</label>
+				<input v-model="password" id="pass" type="text" class="popup__field__input">
+				<p v-if="!passwordIsValid" class="error-message">Please enter a password of at least 8 characters</p>
 			</div>
 		</div>
-		<button class="popup__confirm-button">Enter</button>
-	</div>
+		<ButtonBase :disabled="!formIsValid" name="Enter"/>
+	</form>
 </template>
 
 <script>
+import ButtonBase from "../components/ButtonBase.vue";
 export default {
-	name: "LoginView"
+	name: "LoginView",
+	components: {
+		ButtonBase
+	},
+	data(){
+		return {
+			login: null,
+			password: null
+		}
+	},
+	computed: {
+		loginIsValid(){
+			if(!this.login){
+				return
+			}
+			const emailValidationRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+			return this.login.match(emailValidationRegex)
+		},
+		passwordIsValid(){
+			return !!(this.password && this.password.length >= 8)
+		},
+		formIsValid(){
+			return this.loginIsValid && this.passwordIsValid
+		}
+	},
+	methods: {
+		submitForm(){
+			if(this.loginIsValid && this.passwordIsValid){
+				this.$router.push({name: 'MainView'})
+				localStorage.setItem('login-status', '1')
+			} else {
+				console.log('Invalid validation!')
+			}
+		},
+	},
+	watch: {
+		login(value){
+		}
+	}
 }
 </script>
 
 <style lang="scss">
+.error-message {
+	position: absolute;
+	top: 80%;
+	color: #EB1717;
+	font-size: 14px;
+}
+
+
 .login__backdrop {
 	position: absolute;
 	height: 100%;
@@ -60,6 +109,7 @@ export default {
 		justify-content: space-between;
 		gap: 24px;
 		.popup__field {
+			position: relative;
 			display: flex;
 			flex-direction: column;
 			gap: 7px;
@@ -67,6 +117,9 @@ export default {
 			&__title {
 				color: #9d9999;
 				font-size: 16px;
+			}
+			.error-font {
+				color: #EB1717;
 			}
 			&__input {
 				height: 50px;
@@ -77,14 +130,8 @@ export default {
 			}
 		}
 	}
-	.popup__confirm-button {
+	button {
 		height: 50px;
-		background: linear-gradient(104.34deg, #41522E -15.34%, #BE8022 145.95%);
-		box-shadow: 0 0 2px rgba(0, 0, 0, 0.15);
-		border-radius: 4px;
-		color: #fff;
 	}
 }
-
-
 </style>

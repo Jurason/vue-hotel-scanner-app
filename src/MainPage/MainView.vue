@@ -1,4 +1,13 @@
 <template>
+	<nav>
+		<div class="nav-left">Simple Hotel Check</div>
+		<div class="nav-right">
+			Log out
+			<button @click="logOut">
+				X
+			</button>
+		</div>
+	</nav>
 	<div class="main__container">
 		<SearchBoard
 			@search-query="searchQueryHandler($event)"
@@ -85,18 +94,35 @@ export default {
 			const [month, day, year] = date.toDateString().split(' ').slice(1)
 			return `${day} ${month} ${year}`
 		},
-		watch: {
-			favouritesLength() {
-				localStorage.setItem('favourite-list', JSON.stringify(this.favorites))
-			}
+		logOut(){
+			this.$router.push({name: 'LoginView'})
+			localStorage.setItem('login-status', '0')
 		}
-	}
+	},
+	// watch: {
+	// 	favouritesLength() {
+	// 		localStorage.setItem('favourite-list', JSON.stringify(this.favorites))
+	// 	}
+	// }
 }
 </script>
 
 <style lang="scss">
 body {
 	background: #F4F4F4;
+}
+nav {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100vw;
+	height: 50px;
+	.nav-right {
+		cursor: pointer;
+		button {
+			background-color: #c73d3d;
+		}
+	}
 }
 .container {
 	background: #FFFFFF;

@@ -11,12 +11,11 @@
 		</div>
 		<div class="item__price-sign">Price</div>
 		<div class="item__right-block">
-			<img
-					@click="clickHandler"
+			<div
 					class="item__right-block__like-button"
+					@click="clickHandler"
 					:class="{ 'button-active' : isAddedToFav }"
-					src="../../assets/like-button.svg" alt="">
-			<div class="item__right-block__like-button"></div>
+			/>
 			<div class="item__right-block__price">
 				{{ item.priceAvg }} $
 			</div>
@@ -33,13 +32,6 @@ export default {
 	emits: {
 		'add-to-favourite': payload => typeof payload === 'object',
 		'remove-from-favourite': payload => typeof payload === 'object',
-	},
-	mounted() {
-	},
-	data(){
-		return {
-
-		}
 	},
 	computed: {
 		isAddedToFav(){
@@ -58,9 +50,7 @@ export default {
 	}
 }
 </script>
-
 <style lang="scss">
-
 .item {
 	min-height: 100px;
 	&__hotel-info {
@@ -76,17 +66,21 @@ export default {
 	 }
 }
 .item__right-block__like-button {
-	background-color: blue;
+	mask: url("../../assets/like-button.svg") no-repeat 50% 50%;
+	mask-size: cover;
+	background-color: #2c2b2b;
+	width: 21px;
+	height: 18px;
+	cursor: pointer;
+}
+.item__right-block__like-button:hover {
+	background-color: #EBEBEB;
+}
+.item__right-block__like-button:active {
+	background-color: #E55858;
 }
 .button-active {
-	background-color: red;
+	background-color: #E55858;
 }
-//.item__right-block__like-button {
-//	mask: url("../../assets/like-button.svg") no-repeat 50% 50%;
-//	mask-size: cover;
-//	background-color: red;
-//	width: 24px;
-//	height: 24px;
-//}
 
 </style>

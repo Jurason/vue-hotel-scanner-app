@@ -17,15 +17,17 @@
 				<input type="text" class="popup__field__input" v-model="days">
 			</div>
 		</div>
-		<button
+		<ButtonBase
+				:disabled="buttonDisabled"
+				name="Search"
 				@click="searchQueryConfirm"
-				class="popup__confirm-button">
-			Search
-		</button>
+				class="popup__confirm-button"
+		/>
 	</div>
 </template>
 
 <script>
+import ButtonBase from "../../components/ButtonBase.vue";
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 import { getLocationCity } from "../../api.js";
@@ -33,7 +35,8 @@ import { getLocationCity } from "../../api.js";
 export default {
 	name: "SearchBoard",
 	components: {
-		Datepicker
+		Datepicker,
+		ButtonBase
 	},
 	emits: {
 		'search-query': payload => typeof payload === 'object'
@@ -58,6 +61,9 @@ export default {
 	computed: {
 		checkOutDate(){
 			return this.checkInDate.addDays(this.days)
+		},
+		buttonDisabled(){
+			return !(this.checkInDate && this.days && this.location)
 		}
 	},
 	methods: {
@@ -116,13 +122,8 @@ export default {
 			}
 		}
 	}
-
-	.popup__confirm-button {
+	button {
 		height: 50px;
-		background: linear-gradient(104.34deg, #41522E -15.34%, #BE8022 145.95%);
-		box-shadow: 0 0 2px rgba(0, 0, 0, 0.15);
-		border-radius: 4px;
-		color: #fff;
 	}
 }
 </style>

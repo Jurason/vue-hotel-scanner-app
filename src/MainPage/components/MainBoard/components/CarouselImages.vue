@@ -30,6 +30,7 @@ export default {
 
 <style lang="scss">
 	.carousel-images {
+		min-height: 150px;
 		max-height: 150px;
 		display: flex;
 		gap: 10px;

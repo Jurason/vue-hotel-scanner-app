@@ -2,12 +2,14 @@
 	<router-view/>
 </template>
 <script>
-import { getLocationCity } from "./api.js";
-import axios from "axios";
 
 export default {
 	name: 'App',
 	async mounted() {
+		const loginStatus = localStorage.getItem('login-status')
+		if(!loginStatus || loginStatus !== '1'){
+			this.$router.push({name: 'LoginView'})
+		}
 		this.initialState.date = new Date()
 	},
 	data(){
@@ -20,6 +22,7 @@ export default {
 		}
 	},
 	methods: {
+
 	}
 }
 </script>
