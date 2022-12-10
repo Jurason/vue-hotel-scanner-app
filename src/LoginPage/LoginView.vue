@@ -4,14 +4,14 @@
 		<div class="popup__title">Simple Hotel Check</div>
 		<div class="popup__fields">
 			<div class="popup__field">
-				<label :class="{'error-font' : !loginIsValid}" for="email" class="popup__field__title">Login</label>
+				<label :class="{'error-font' : !loginValid}" for="email" class="popup__field__title">Login</label>
 				<input v-model="login" id="email" type="text" class="popup__field__input">
-				<p v-if="!loginIsValid" class="error-message">Invalid email</p>
+				<p v-if="!loginValid" class="error-message">Invalid email</p>
 			</div>
 			<div class="popup__field">
-				<label :class="{'error-font' : !passwordIsValid}" for="pass" class="popup__field__title">Password</label>
+				<label :class="{'error-font' : !passwordValid}" for="pass" class="popup__field__title">Password</label>
 				<input v-model="password" id="pass" type="text" class="popup__field__input">
-				<p v-if="!passwordIsValid" class="error-message">Please enter a password of at least 8 characters</p>
+				<p v-if="!passwordValid" class="error-message">Please enter a password of at least 8 characters</p>
 			</div>
 		</div>
 		<ButtonBase :disabled="!formIsValid" name="Enter"/>
@@ -28,36 +28,42 @@ export default {
 	data(){
 		return {
 			login: null,
-			password: null
+			loginValid: true,
+			password: null,
+			passwordValid: true,
 		}
 	},
 	computed: {
-		loginIsValid(){
-			if(!this.login){
-				return
-			}
-			const emailValidationRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-			return this.login.match(emailValidationRegex)
-		},
-		passwordIsValid(){
-			return !!(this.password && this.password.length >= 8)
-		},
 		formIsValid(){
-			return this.loginIsValid && this.passwordIsValid
+			if(!this.login || !this.password){
+				return false
+			}
+			return this.loginValid && this.passwordValid
 		}
 	},
 	methods: {
 		submitForm(){
-			if(this.loginIsValid && this.passwordIsValid){
+			if(this.loginValid && this.passwordValid){
 				this.$router.push({name: 'MainView'})
 				localStorage.setItem('login-status', '1')
 			} else {
 				console.log('Invalid validation!')
 			}
 		},
+		loginIsValid(value){
+			const emailValidationRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+			this.loginValid = emailValidationRegex.test(value);
+		},
+		passwordIsValid(value){
+			this.passwordValid = !!(value && value.length >= 8)
+		},
 	},
 	watch: {
-		login(value){
+		login(newValue){
+			this.loginIsValid(newValue)
+		},
+		password(newValue){
+			this.passwordIsValid(newValue)
 		}
 	}
 }
