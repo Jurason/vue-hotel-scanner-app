@@ -3,9 +3,7 @@
 		<div class="nav-left">Simple Hotel Check</div>
 		<div class="nav-right">
 			Log out
-			<button @click="logOut">
-				X
-			</button>
+			<img @click="logOut" src="../assets/exit-icon.svg" alt="">
 		</div>
 	</nav>
 	<div class="main__container">
@@ -99,11 +97,11 @@ export default {
 			localStorage.setItem('login-status', '0')
 		}
 	},
-	// watch: {
-	// 	favouritesLength() {
-	// 		localStorage.setItem('favourite-list', JSON.stringify(this.favorites))
-	// 	}
-	// }
+	watch: {
+		favouritesLength() {
+			localStorage.setItem('favourite-list', JSON.stringify(this.favorites))
+		}
+	}
 }
 </script>
 
@@ -116,28 +114,31 @@ nav {
 	justify-content: space-between;
 	align-items: center;
 	width: 100vw;
-	height: 50px;
+	height: 92px;
+	padding: 32px;
+	.nav-left {
+		font-size: 24px;
+		color: #424242;
+	}
 	.nav-right {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		font-size: 16px;
+		color: #41522E;
 		cursor: pointer;
-		button {
-			background-color: #c73d3d;
-		}
 	}
 }
 .container {
 	background: #FFFFFF;
 	box-shadow: 0 4px 33px rgba(0, 0, 0, 0.04);
 	border-radius: 16px;
-	padding: 32px;
 }
 	.main__container {
 		display: grid;
 		grid-gap: 24px;
 		grid-template-columns: 1fr 2fr;
-		grid-template-rows: 1fr 1fr;
-		margin: 0 184px 26px 208px;
-		max-height: 100vh;
-		max-width: 100vw;
+		margin: 0 12% 26px 10%;
 		.main__comp {
 			background: #fff;
 			border: 1px solid black;

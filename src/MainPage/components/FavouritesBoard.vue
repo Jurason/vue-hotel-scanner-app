@@ -108,11 +108,12 @@ export default {
 <style lang="scss">
 	.favourites {
 		min-width: 360px;
-		height: 472px;
+		height: 470px;
 		display: flex;
 		flex-direction: column;
 		justify-content: flex-start;
 		gap: 32px;
+		padding: 32px;
 		&__title {
 			font-size: 24px;
 			font-weight: 500;

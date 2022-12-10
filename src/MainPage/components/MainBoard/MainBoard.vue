@@ -12,7 +12,7 @@
 		</header>
 		<CarouselImages/>
 		<div class="main-board__list-header">
-			Added to favourite {{ favouriteCounter }} hotels
+			Added to Favourites: <span>{{ favouriteCounter }}</span> hotels
 		</div>
 		<ListHotels
 		 :hotels-list="hotelsList">
@@ -25,7 +25,8 @@
 					>
 						<template #avatar>
 							<div class="item__image">
-								<img src="" alt="Image">
+								<img class="img-house" src="../../../assets/house.svg" alt="Image">
+								<img class="img-circle" src="../../../assets/Ellipse.svg" alt="Image">
 							</div>
 						</template>
 					</ItemHotel>
@@ -75,10 +76,13 @@ export default {
 
 <style lang="scss">
 .main-board {
+	height: 904px;
 	grid-row: span 2;
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
+	padding: 48px 32px;
+	color: #424242;
 	.main-board__header {
 		display: flex;
 		justify-content: space-between;
@@ -86,22 +90,42 @@ export default {
 		&__left-block {
 			font-size: 32px;
 			font-weight: 500;
+			img {
+				margin: 0 20px;
+			}
 		}
 		&__right-block {
 			font-size: 24px;
 			font-weight: 400;
 			text-align: right;
+			color: #41522E;
 		}
 	}
 	.main-board__list-header {
 		margin: 28px auto 12px 0;
+		span {
+			font-weight: 600;
+		}
 	}
 	.hotel-list__item {
 		display: grid;
 		min-width: 100%;
-		grid-template-columns: 1fr 4fr 1fr 2fr;
+		grid-template-columns: 1fr 5fr 2fr 1fr;
 		justify-content: space-between;
+		padding: 16px 16px 16px 0;
 	}
 }
-
+.item__image {
+	position: relative;
+	.img-house {
+		position: absolute;
+		top: calc(50% - 17.5px);
+		left: calc(50% - 17.5px);
+	}
+	.img-circle {
+		position: absolute;
+		top: calc(50% - 32px);
+		left: calc(50% - 32px);
+	}
+}
 </style>

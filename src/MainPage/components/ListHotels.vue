@@ -1,7 +1,8 @@
 <template>
 	<div class="hotels-list">
-		<div v-for="item in filteredList" :key="item.id">
+		<div class="hotel-list__wrapper" v-for="item in filteredList" :key="item.id">
 			<slot name="item" :item="item"/>
+			<hr class="item__bottom-line">
 		</div>
 	</div>
 </template>
@@ -62,5 +63,12 @@ export default {
 	overflow-y: scroll;
 	padding: 0;
 }
-
+.hotel-list__wrapper {
+	padding: 0 16px 0 0;
+}
+.item__bottom-line {
+	background: rgba(135, 135, 135);
+	width: 100%;
+	opacity: .2;
+}
 </style>

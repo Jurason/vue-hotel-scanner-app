@@ -46,6 +46,7 @@ export default {
 			if(this.loginValid && this.passwordValid){
 				this.$router.push({name: 'MainView'})
 				localStorage.setItem('login-status', '1')
+				//sql request to DB
 			} else {
 				console.log('Invalid validation!')
 			}

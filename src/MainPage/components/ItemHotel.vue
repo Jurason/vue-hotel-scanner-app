@@ -5,11 +5,11 @@
 				{{ item.hotelName }}
 			</div>
 			<div class="item__hotel-info__start-date">
-				{{ item.checkInDate }} - {{ item.days }} days
+				{{ item.checkInDate }} &nbsp;&nbsp;&nbsp; - &nbsp;&nbsp;&nbsp; {{ item.days }} days
 			</div>
 			<div class="item__hotel-info__start-rate">Stars {{ item.stars }}</div>
 		</div>
-		<div class="item__price-sign">Price</div>
+		<div class="item__price-sign">Price:</div>
 		<div class="item__right-block">
 			<div
 					class="item__right-block__like-button"
@@ -20,7 +20,7 @@
 				{{ item.priceAvg }} $
 			</div>
 		</div>
-	<hr class="item__bottom-line">
+
 </template>
 
 <script>
@@ -52,19 +52,40 @@ export default {
 </script>
 <style lang="scss">
 .item {
-	min-height: 100px;
+	//min-height: 100px;
+	//padding: 16px;
 	&__hotel-info {
 		 display: flex;
 		 flex-direction: column;
-		justify-content: space-between;
+		 justify-content: space-between;
 		 text-align: left;
 		&__title {
 			font-size: 17px;
-			font-weight: 300;
+			line-height: 22px;
 			text-align: left;
+		}
+		&__start-date {
+			font-size: 14px;
+			line-height: 22px;
+			text-align: left;
+			color: #878787;
 		}
 	 }
 }
+.item__price-sign {
+	align-self: flex-end;
+	text-align: right;
+	font-size: 11px;
+	color: #878787;
+}
+.item__right-block {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: flex-end;
+}
+
+
 .item__right-block__like-button {
 	mask: url("../../assets/like-button.svg") no-repeat 50% 50%;
 	mask-size: cover;

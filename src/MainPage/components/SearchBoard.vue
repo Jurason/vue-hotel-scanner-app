@@ -85,7 +85,9 @@ export default {
 
 <style lang="scss">
 .search-board {
+	max-height: 410px;
 	min-width: 360px;
+	padding: 32px;
 }
 .popup {
 	display: flex;
