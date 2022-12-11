@@ -10,16 +10,22 @@ export default {
 		if(!loginStatus || loginStatus !== '1'){
 			this.$router.push({name: 'LoginView'})
 		}
-		this.initialState.date = new Date()
+		this.initialState.checkIn = new Date()
+		if(localStorage.getItem('geo-location')){
+			this.initialState.location = localStorage.getItem('geo-location')
+		}
 	},
 	data(){
 		return {
 			initialState: {
 				location: 'Kyiv',
-				date: null,
+				checkIn: null,
 				days: 2,
-			}
+			},
 		}
+	},
+	computed: {
+
 	},
 	methods: {
 

@@ -4,8 +4,14 @@ import axios from 'axios'
 const apiHotels = (location, checkIn, checkOut, limit=10) => {
     return `http://engine.hotellook.com/api/v2/cache.json?location=${location}}&currency=usd&checkIn=${checkIn}&checkOut=${checkOut}&limit=${limit}`
 }
+Date.prototype.addDays = function(days) {
+    const date = new Date(this.valueOf());
+    date.setDate(date.getDate() + days);
+    return date;
+}
 export const getHotels = (query) => {
-    let { location, checkIn, checkOut } = query
+    let { location, checkIn, days } = query
+    let checkOut = checkIn.addDays(days)
     checkIn = dateFormatHandler(checkIn)
     checkOut = dateFormatHandler(checkOut)
     return axios.get(apiHotels(location,checkIn, checkOut)).then(res => res.data).catch(error => console.log(error))
