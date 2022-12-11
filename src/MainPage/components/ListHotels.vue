@@ -70,5 +70,6 @@ export default {
 	background: rgba(135, 135, 135);
 	width: 100%;
 	opacity: .2;
+	margin: 0;
 }
 </style>

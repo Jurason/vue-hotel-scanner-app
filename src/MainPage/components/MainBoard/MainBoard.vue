@@ -109,6 +109,7 @@ export default {
 	}
 	.hotel-list__item {
 		display: grid;
+		min-height: 100px;
 		min-width: 100%;
 		grid-template-columns: 1fr 5fr 2fr 1fr;
 		justify-content: space-between;

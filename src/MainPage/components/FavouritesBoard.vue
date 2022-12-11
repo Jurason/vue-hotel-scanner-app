@@ -158,8 +158,10 @@ export default {
 		.hotel-list__item {
 			display: grid;
 			min-width: 100%;
+			min-height: 74px;
 			grid-template-columns: 4fr 1fr 2fr;
 			justify-content: space-between;
+			padding: 16px 16px 16px 0;
 		}
 	}
 	.active-sort-option {

@@ -38,14 +38,16 @@ export default {
 		FavouritesBoard,
 		MainBoard
 	},
-	mounted() {
-		this.listHotels = JSON.parse(localStorage.getItem('hotels-list'))
-		this.favorites = JSON.parse(localStorage.getItem('favourite-list'))
+	props: {
+	},
+	async mounted() {
 		this.currentLocation = this.$root.$data.initialState.location
-		this.currentCheckInDate = this.$root.$data.initialState.date
+		this.currentCheckInDate = this.$root.$data.initialState.checkIn
 		this.currentDays = this.$root.$data.initialState.days
 
+		this.listHotels = await getHotels(this.$root.$data.initialState)
 		this.listHandler()
+		this.favouritesListHandler()
 	},
 	data() {
 		return {
@@ -88,12 +90,23 @@ export default {
 				addedToFav: false,
 			}))
 		},
+		favouritesListHandler(){
+			this.favorites = JSON.parse(localStorage.getItem('favourite-list')) || []
+			this.favorites.forEach(hotel => {
+				const item = this.listHotels.find(el => el.hotelId === hotel.hotelId)
+				if(item){
+					item.addedToFav = true
+				}
+			})
+		},
 		dateFormatHandler(date) {
 			const [month, day, year] = date.toDateString().split(' ').slice(1)
 			return `${day} ${month} ${year}`
 		},
 		logOut(){
 			this.$router.push({name: 'LoginView'})
+			localStorage.removeItem('favourite-list')
+			localStorage.removeItem('geo-location')
 			localStorage.setItem('login-status', '0')
 		}
 	},
@@ -126,7 +139,9 @@ nav {
 		gap: 12px;
 		font-size: 16px;
 		color: #41522E;
-		cursor: pointer;
+		img {
+			cursor: pointer;
+		}
 	}
 }
 .container {
@@ -144,14 +159,4 @@ nav {
 			border: 1px solid black;
 		}
 	}
-//.search-board {
-//	grid-area: searchBar;
-//}
-//.favourites {
-//	grid-area: favourites;
-//}
-//.main-board {
-//	grid-area: main;
-//}
-
 </style>

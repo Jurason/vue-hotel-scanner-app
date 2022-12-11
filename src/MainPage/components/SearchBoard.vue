@@ -42,14 +42,13 @@ export default {
 		'search-query': payload => typeof payload === 'object'
 	},
 	async mounted(){
-		this.checkInDate = this.$root.$data.initialState.date
+		this.checkInDate = this.$root.$data.initialState.checkIn
 		this.days = this.$root.$data.initialState.days
-		this.location = await getLocationCity()
-		Date.prototype.addDays = function(days) {
-			const date = new Date(this.valueOf());
-			date.setDate(date.getDate() + days);
-			return date;
+		if(!localStorage.getItem('geo-location')){
+			this.$root.$data.initialState.location = await getLocationCity()
+			localStorage.setItem('geo-location', this.$root.$data.initialState.location)
 		}
+		this.location = this.$root.$data.initialState.location
 	},
 	data(){
 		return {
@@ -59,9 +58,6 @@ export default {
 		}
 	},
 	computed: {
-		checkOutDate(){
-			return this.checkInDate.addDays(this.days)
-		},
 		buttonDisabled(){
 			return !(this.checkInDate && this.days && this.location)
 		}
@@ -74,7 +70,6 @@ export default {
 			const searchQuery = {
 				location: this.location,
 				checkIn: this.checkInDate,
-				checkOut: this.checkOutDate,
 				days: this.days
 			}
 			this.$emit('search-query', searchQuery)

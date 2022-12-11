@@ -5,9 +5,9 @@
 				{{ item.hotelName }}
 			</div>
 			<div class="item__hotel-info__start-date">
-				{{ item.checkInDate }} &nbsp;&nbsp;&nbsp; - &nbsp;&nbsp;&nbsp; {{ item.days }} days
+				{{ item.checkInDate }} &nbsp;&nbsp; - &nbsp;&nbsp; {{ item.days }} days
 			</div>
-			<div class="item__hotel-info__start-rate">Stars {{ item.stars }}</div>
+			<StarRatingComponent :rating="item.stars"/>
 		</div>
 		<div class="item__price-sign">Price:</div>
 		<div class="item__right-block">
@@ -17,15 +17,19 @@
 					:class="{ 'button-active' : isAddedToFav }"
 			/>
 			<div class="item__right-block__price">
-				{{ item.priceAvg }} $
+				{{ item.priceAvg }}$
 			</div>
 		</div>
-
 </template>
 
 <script>
+import StarRatingComponent from "../../components/StarRatingComponent.vue";
+
 export default {
 	name: "ItemHotel",
+	components: {
+		StarRatingComponent
+	},
 	props: {
 		item: {type: Object, required: true},
 	},
@@ -83,6 +87,11 @@ export default {
 	flex-direction: column;
 	justify-content: space-between;
 	align-items: flex-end;
+	&__price {
+		font-size: 17px;
+		font-weight: 400;
+		line-height: 22px;
+	}
 }
 
 
