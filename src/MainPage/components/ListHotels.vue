@@ -12,21 +12,21 @@ export default {
 	name: "ListHotels",
 	props: {
 		hotelsList: {type: Array, required: true},
-		filteredOptions: {type: Object, required: false}
+		filterOptions: {type: Object, required: false}
 	},
 	computed: {
 		filteredList(){
-			if(!this.filteredOptions){
+			if(!this.filterOptions){
 				return this.hotelsList
 			}
 			const filteredItems = this.hotelsList
-			if(this.filteredOptions.byRating.asc){
+			if(this.filterOptions.byRating.asc){
 				filteredItems.sort((a,b) => a.priceAvg - b.priceAvg)
 			}
-			if(this.filteredOptions.byRating.desc){
+			if(this.filterOptions.byRating.desc){
 				filteredItems.sort((a,b) => b.priceAvg - a.priceAvg)
 			}
-			if(this.filteredOptions.byName.desc){
+			if(this.filterOptions.byName.desc){
 				filteredItems.sort((a, b) => {
 					const nameA = a.hotelName.toUpperCase()
 					const nameB = b.hotelName.toUpperCase()
@@ -38,7 +38,7 @@ export default {
 					}
 				})
 			}
-			if(this.filteredOptions.byName.asc){
+			if(this.filterOptions.byName.asc){
 				filteredItems.sort((a, b) => {
 					const nameA = a.hotelName.toUpperCase()
 					const nameB = b.hotelName.toUpperCase()
@@ -51,7 +51,6 @@ export default {
 				})
 			}
 			return filteredItems
-
 		}
 	}
 }

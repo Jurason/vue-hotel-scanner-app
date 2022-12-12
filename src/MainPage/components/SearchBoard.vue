@@ -70,7 +70,7 @@ export default {
 			const searchQuery = {
 				location: this.location,
 				checkIn: this.checkInDate,
-				days: this.days
+				days: Number(this.days)
 			}
 			this.$emit('search-query', searchQuery)
 		},

@@ -35,10 +35,7 @@ export default {
 	},
 	computed: {
 		formIsValid(){
-			if(!this.login || !this.password){
-				return false
-			}
-			return this.loginValid && this.passwordValid
+			return !this.login || !this.password ? false : this.loginValid && this.passwordValid
 		}
 	},
 	methods: {
