@@ -22,13 +22,18 @@
 			:favourite-hotels="favorites"
 			@remove-from-favourite="removeFromFavourite($event)"
 		/>
+		<transition name="loader-transition">
+			<SyncLoader size="30px" color="#BE8022" style="position: absolute; top: 50%; left: 50%" v-if="isLoading"/>
+		</transition>
 	</div>
+	<div :class="{'foggy': isLoading}"></div>
 </template>
 
 <script>
 import SearchBoard from "./components/SearchBoard.vue";
-import FavouritesBoard from "./components/FavouritesBoard.vue";
+import FavouritesBoard from "./components/FavouritesBoard/FavouritesBoard.vue";
 import MainBoard from './components/MainBoard/MainBoard.vue';
+import SyncLoader from 'vue-spinner/src/SyncLoader.vue'
 import { getHotels } from '../api.js'
 
 export default {
@@ -36,7 +41,8 @@ export default {
 	components: {
 		SearchBoard,
 		FavouritesBoard,
-		MainBoard
+		MainBoard,
+		SyncLoader
 	},
 	props: {
 	},
@@ -51,6 +57,7 @@ export default {
 	},
 	data() {
 		return {
+			isLoading: false,
 			listHotels: [],
 			favorites: [],
 			currentLocation: null,
@@ -76,11 +83,13 @@ export default {
 			}
 		},
 		async searchQueryHandler(query) {
+			this.isLoading = true
 			const {location, checkIn, days} = query
 			this.currentLocation = location
 			this.currentCheckInDate = checkIn
 			this.currentDays = days
 			this.listHotels = await getHotels(query)
+			this.isLoading = false
 			this.listHandler()
 		},
 		listHandler() {
@@ -119,6 +128,25 @@ export default {
 </script>
 
 <style lang="scss">
+.loader-transition-enter-active,
+.loader-transition-leave-active {
+	transition: opacity 0.5s ease;
+}
+
+.loader-transition-enter-from,
+.loader-transition-leave-to {
+	opacity: 0;
+}
+.foggy {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	background-color: grey;
+	opacity: .3;
+}
+
 body {
 	background: #F4F4F4;
 }
@@ -149,14 +177,14 @@ nav {
 	box-shadow: 0 4px 33px rgba(0, 0, 0, 0.04);
 	border-radius: 16px;
 }
-	.main__container {
-		display: grid;
-		grid-gap: 24px;
-		grid-template-columns: 1fr 2fr;
-		margin: 0 12% 26px 10%;
-		.main__comp {
-			background: #fff;
-			border: 1px solid black;
-		}
+.main__container {
+	display: grid;
+	grid-gap: 24px;
+	grid-template-columns: 1fr 2fr;
+	margin: 0 12% 26px 10%;
+	.main__comp {
+		background: #fff;
+		border: 1px solid black;
 	}
+}
 </style>

@@ -330,6 +330,11 @@ vue-router@^4.1.6:
   dependencies:
     "@vue/devtools-api" "^6.4.5"
 
+vue-spinner@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.npmjs.org/vue-spinner/-/vue-spinner-1.0.4.tgz"
+  integrity sha512-GNG2F+8BLX201JT/jUX+84Gsi3ZteVQwt9K7mues3ts9FcQ95dGn7uu6a5ndSxdYYUEzfh1KngZiOE0u+l4itA==
+
 vue@^3.2.0, vue@^3.2.25, vue@^3.2.41, vue@>=3.2.0, vue@3.2.45:
   version "3.2.45"
   resolved "https://registry.npmjs.org/vue/-/vue-3.2.45.tgz"
