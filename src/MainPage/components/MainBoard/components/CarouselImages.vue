@@ -1,35 +1,62 @@
 <template>
 	<div ref="carousel" class="carousel-images">
-		<img v-for="img in listImages" :key="img.id" :src="img.download_url" alt="">
+		<PulseLoader style="position: absolute; top: calc(50% - 8px); left: 50%"
+								 :loading="isLoaded"
+								 color="#BE8022"
+		/>
+		<img
+				:class="{'transparent': isLoaded}"
+				@load="load" v-for="img in slicedList"
+				:key="img.id"
+				:src="img.download_url" alt="img.url"
+		>
 	</div>
 </template>
-
 <script>
 import { getCarouselImages } from "../../../../api.js";
-
+import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
 export default {
 	name: "CarouselImages",
+	components: {
+		PulseLoader
+	},
 	mounted(){
 		getCarouselImages().then(data => this.listImages = data)
-
 		this.$refs.carousel.addEventListener('wheel', this.scrollHandler)
+	},
+	beforeUnmount() {
+		this.$refs.carousel.removeEventListener('wheel', this.scrollHandler)
 	},
 	data(){
 		return {
-			listImages: []
+			listImages: [],
+			isLoaded: true,
+			imagesLoadedCounter: 0
+		}
+	},
+	computed: {
+		slicedList(){
+			return this.listImages.slice(24,30)
 		}
 	},
 	methods: {
 		scrollHandler(event){
 			event.preventDefault()
 			this.$refs.carousel.scrollLeft += event.deltaY
+		},
+		load(){
+			this.imagesLoadedCounter++
+			if(this.imagesLoadedCounter === this.slicedList.length){
+				this.isLoaded = false
+			}
 		}
 	}
 }
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 	.carousel-images {
+		position: relative;
 		min-height: 150px;
 		max-height: 150px;
 		display: flex;
@@ -40,14 +67,10 @@ export default {
 			max-width: 100%;
 			width: 150px;
 			border-radius: 10px;
+			transition: opacity .3s ease-in-out;
 		}
 	}
+	.transparent {
+		opacity: 0;
+	}
 </style>
-
-<!--0: Object { id: "0", author: "Alejandro Escamilla", width: 5000, … }-->
-<!--author: "Alejandro Escamilla"-->
-<!--download_url: "https://picsum.photos/id/0/5000/3333"-->
-<!--height: 3333-->
-<!--id: "0"-->
-<!--url: "https://unsplash.com/photos/yC-Yzbqy7PY"-->
-<!--width: 5000-->
