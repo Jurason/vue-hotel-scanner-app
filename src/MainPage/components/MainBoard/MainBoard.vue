@@ -75,7 +75,8 @@ export default {
 
 <style lang="scss">
 .main-board {
-	height: 904px;
+	max-height: 904px;
+	max-width: 664px;
 	grid-row: span 2;
 	display: flex;
 	flex-direction: column;
@@ -97,6 +98,7 @@ export default {
 			font-size: 24px;
 			font-weight: 400;
 			text-align: right;
+			line-height: 29px;
 			color: #41522E;
 		}
 	}

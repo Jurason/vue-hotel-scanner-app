@@ -53,7 +53,7 @@ export default {
 </script>
 <style lang="scss">
 	.favourites {
-		min-width: 360px;
+		max-width: 360px;
 		height: 470px;
 		display: flex;
 		flex-direction: column;

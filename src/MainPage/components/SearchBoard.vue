@@ -84,9 +84,15 @@ export default {
 	height: 50px;
 }
 .search-board {
-	max-height: 410px;
-	min-width: 360px;
+	height: 410px;
+	max-width: 360px;
 	padding: 32px;
+	.popup__field {
+		&__title {
+			font-size: 16px;
+			line-height: 19px;
+		}
+	}
 }
 .popup {
 	display: flex;

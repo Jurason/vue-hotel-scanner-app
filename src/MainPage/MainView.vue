@@ -178,10 +178,11 @@ nav {
 	border-radius: 16px;
 }
 .main__container {
+	max-width: fit-content;
 	display: grid;
 	grid-gap: 24px;
 	grid-template-columns: 1fr 2fr;
-	margin: 0 12% 26px 10%;
+	margin: 0 auto 26px auto;
 	.main__comp {
 		background: #fff;
 		border: 1px solid black;
