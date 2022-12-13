@@ -2,7 +2,7 @@ import axios from 'axios'
 
 //get hotel information
 const apiHotels = (location, checkIn, checkOut, limit=10) => {
-    return `http://engine.hotellook.com/api/v2/cache.json?location=${location}}&currency=usd&checkIn=${checkIn}&checkOut=${checkOut}&limit=${limit}`
+    return `http://engine.hotellook.com/api/v2/cache.json?location=${location}&currency=usd&checkIn=${checkIn}&checkOut=${checkOut}&limit=${limit}`
 }
 Date.prototype.addDays = function(days) {
     const date = new Date(this.valueOf());
