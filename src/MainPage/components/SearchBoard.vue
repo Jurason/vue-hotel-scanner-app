@@ -8,6 +8,7 @@
 			<div class="popup__field">
 				<div class="popup__field__title">Check-in date</div>
 				<Datepicker
+						class="datepicker"
 						v-model="checkInDate"
 						:enable-time-picker="false"
 				/>
@@ -79,6 +80,9 @@ export default {
 </script>
 
 <style lang="scss">
+.datepicker input{
+	height: 50px;
+}
 .search-board {
 	max-height: 410px;
 	min-width: 360px;
