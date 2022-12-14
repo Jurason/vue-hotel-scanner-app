@@ -53,7 +53,7 @@ export default {
 </script>
 <style lang="scss">
 	.favourites {
-		max-width: 360px;
+		width: 360px;
 		height: 470px;
 		display: flex;
 		flex-direction: column;
@@ -65,42 +65,6 @@ export default {
 			font-weight: 500;
 			text-align: left;
 		}
-		&__filters {
-			display: flex;
-			align-items: flex-start;
-			gap: 8px;
-			&__sort {
-				display: flex;
-				align-items: center;
-				gap: 4px;
-				padding: 4px 8px;
-				border: 1px solid #E5E5E5;
-				border-radius: 4px;
-				color: #E5E5E5;
-				cursor: pointer;
-				.toggle {
-					display: flex;
-					flex-direction: column;
-					.toggle-up, .toggle-down{
-						opacity: .2;
-					}
-					.active-toggle {
-						opacity: 1;
-					}
-				}
-				.toggle-down {
-					transform: rotate(180deg);
-				}
-			}
-			.sort-rate {
-				width: 89px;
-				height: 28px;
-			}
-			.sort-price {
-				width: 71px;
-				height: 28px;
-			}
-		}
 		.hotel-list__item {
 			display: grid;
 			min-width: 100%;
@@ -108,13 +72,10 @@ export default {
 			grid-template-columns: 4fr 1fr 2fr;
 			justify-content: space-between;
 			padding: 16px 16px 16px 0;
+			.date-tab {
+				margin: 0 10px;
+			}
 		}
 	}
-	.active-sort-option {
-		border-color: #41522E;
-		color: #41522E;
-	}
-	.active-toggle {
-		opacity: 1;
-	}
+
 </style>

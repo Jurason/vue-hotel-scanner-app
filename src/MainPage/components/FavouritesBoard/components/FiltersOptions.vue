@@ -69,6 +69,11 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss">
 
+.favourites__filters {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+}
 </style>

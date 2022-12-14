@@ -10,7 +10,7 @@
 					:class="{'active-toggle' : filterProp.asc }"
 			>
 			<img
-					class="toggle-down" src="../../../../assets/select.svg" alt=""
+					class="toggle-down" src="../../../../assets/select-d.svg" alt=""
 					:class="{'active-toggle' : filterProp.desc }"
 			>
 		</div>
@@ -40,15 +40,13 @@ export default {
 		.toggle {
 			display: flex;
 			flex-direction: column;
-		.toggle-up, .toggle-down{
-			opacity: .2;
-		}
-		.active-toggle {
-			opacity: 1;
-		}
-		}
-		.toggle-down {
-			transform: rotate(180deg);
+			position: relative;
+			.toggle-up, .toggle-down{
+				opacity: .2;
+			}
+			.active-toggle {
+				opacity: 1;
+			}
 		}
 	}
 	.active-sort-option {

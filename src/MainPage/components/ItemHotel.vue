@@ -5,7 +5,7 @@
 				{{ item.hotelName }}
 			</div>
 			<div class="item__hotel-info__start-date">
-				{{ item.checkInDate }} &nbsp;&nbsp; - &nbsp;&nbsp; {{ item.days }} days
+				{{ item.checkInDate }}<span class="date-tab">-</span>{{ item.days }} days
 			</div>
 			<StarRatingComponent :rating="item.stars"/>
 		</div>

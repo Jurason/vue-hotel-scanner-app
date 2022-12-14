@@ -115,6 +115,9 @@ export default {
 		grid-template-columns: 1fr 5fr 2fr 1fr;
 		justify-content: space-between;
 		padding: 16px 16px 16px 0;
+		.date-tab {
+			margin: 0 20px;
+		}
 	}
 }
 .item__image {
