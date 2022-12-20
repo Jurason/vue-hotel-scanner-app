@@ -19,15 +19,11 @@
 </template>
 
 <script>
-import ButtonBase from "../components/ButtonBase.vue";
 export default {
 	name: "LoginView",
-	components: {
-		ButtonBase
-	},
 	data(){
 		return {
-			login: null,
+			login: '',
 			loginValid: true,
 			password: null,
 			passwordValid: true,

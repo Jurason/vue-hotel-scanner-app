@@ -28,17 +28,9 @@
 </template>
 
 <script>
-import ButtonBase from "../../components/ButtonBase.vue";
-import Datepicker from '@vuepic/vue-datepicker';
-import '@vuepic/vue-datepicker/dist/main.css'
 import { getLocationCity } from "../../api.js";
-
 export default {
 	name: "SearchBoard",
-	components: {
-		Datepicker,
-		ButtonBase
-	},
 	emits: {
 		'search-query': payload => typeof payload === 'object'
 	},
@@ -61,7 +53,7 @@ export default {
 	computed: {
 		buttonDisabled(){
 			return !(this.checkInDate && this.days && this.location)
-		}
+		},
 	},
 	methods: {
 		searchQueryConfirm(){

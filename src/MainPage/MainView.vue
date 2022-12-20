@@ -44,8 +44,6 @@ export default {
 		MainBoard,
 		SyncLoader
 	},
-	props: {
-	},
 	async mounted() {
 		this.currentLocation = this.$root.$data.initialState.location
 		this.currentCheckInDate = this.$root.$data.initialState.checkIn

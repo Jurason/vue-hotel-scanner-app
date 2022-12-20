@@ -56,7 +56,7 @@ export default {
 	computed: {
 		handledDate(){
 			return this.checkInDate ? this.dateFormatHandler(this.checkInDate) : ''
-		}
+		},
 	},
 	methods: {
 		addToFavourite(item){
