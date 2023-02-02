@@ -9,12 +9,12 @@ Date.prototype.addDays = function(days) {
     date.setDate(date.getDate() + days);
     return date;
 }
-export const getHotels = (query) => {
+export const getHotels = async query => {
     let { location, checkIn, days } = query
     let checkOut = checkIn.addDays(days)
     checkIn = dateFormatHandler(checkIn)
     checkOut = dateFormatHandler(checkOut)
-    return axios.get(apiHotels(location,checkIn, checkOut)).then(res => res.data).catch(error => console.log(error))
+    return await axios.get(apiHotels(location,checkIn, checkOut)).then(res => res.data).catch(error => console.log(error))
 }
 function dateFormatHandler(date){
     return date.toISOString().split('T')[0]

@@ -20,16 +20,10 @@ export default {
 			initialState: {
 				location: 'Kyiv',
 				checkIn: null,
-				days: 2,
+				days: 2
 			},
 		}
 	},
-	computed: {
-
-	},
-	methods: {
-
-	}
 }
 </script>
 <style>

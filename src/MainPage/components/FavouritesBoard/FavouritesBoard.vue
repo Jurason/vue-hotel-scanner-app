@@ -24,6 +24,7 @@
 import ListHotels from "../../components/ListHotels.vue";
 import ItemHotel from "../../components/ItemHotel.vue";
 import FiltersOptions	from "./components/FiltersOptions.vue";
+import { watch, toRefs, computed } from 'vue'
 export default {
 	name: "FavouritesBoard",
 	components: {
@@ -33,6 +34,9 @@ export default {
 	},
 	props: {
 		favouriteHotels: {type: Array, required: true}
+	},
+	setup(props){
+
 	},
 	data(){
 		return {
@@ -48,7 +52,7 @@ export default {
 		removeFromFavourites(item){
 			this.$emit('remove-from-favourite', item)
 		},
-	}
+	},
 }
 </script>
 <style lang="scss">

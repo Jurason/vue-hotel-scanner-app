@@ -19,7 +19,6 @@
 
 <script>
 export default {
-	name: "FilterButton",
 	props: {
 		name: {type: String, required: false, default: 'Default Name'},
 		filterProp: {type: Object, required: true}

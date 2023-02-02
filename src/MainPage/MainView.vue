@@ -13,7 +13,7 @@
 		<MainBoard
 			@add-to-favourite="addToFavourite($event)"
 			@remove-from-favourite="removeFromFavourite($event)"
-			:favourite-counter="favouritesLength"
+			:favourite-counter="favoritesListLength"
 			:hotels-list="listHotels"
 			:location="currentLocation || ''"
 			:checkInDate="currentCheckInDate"
@@ -23,7 +23,7 @@
 			@remove-from-favourite="removeFromFavourite($event)"
 		/>
 		<transition name="loader-transition">
-			<SyncLoader size="30px" color="#BE8022" style="position: absolute; top: 50%; left: 50%" v-if="isLoading"/>
+			<SyncLoader size="30px" color="#BE8022" style="position: fixed; top: 50%; left: 50%" v-if="isLoading"/>
 		</transition>
 	</div>
 	<div :class="{'foggy': isLoading}"></div>
@@ -35,6 +35,8 @@ import FavouritesBoard from "./components/FavouritesBoard/FavouritesBoard.vue";
 import MainBoard from './components/MainBoard/MainBoard.vue';
 import SyncLoader from 'vue-spinner/src/SyncLoader.vue'
 import { getHotels } from '../api.js'
+import {ref, onMounted, computed, watch } from "vue";
+import { useRouter } from "vue-router";
 
 export default {
 	name: "MainView",
@@ -44,84 +46,100 @@ export default {
 		MainBoard,
 		SyncLoader
 	},
-	async mounted() {
-		this.currentLocation = this.$root.$data.initialState.location
-		this.currentCheckInDate = this.$root.$data.initialState.checkIn
-		this.currentDays = this.$root.$data.initialState.days
-
-		this.listHotels = await getHotels(this.$root.$data.initialState)
-		this.listHandler()
-		this.favouritesListHandler()
-	},
-	data() {
-		return {
-			isLoading: false,
-			listHotels: [],
-			favorites: [],
-			currentLocation: null,
-			currentCheckInDate: null,
-			currentDays: 1
+	setup(){
+		let currentLocation = 'Kyiv', currentCheckInDate = new Date(), currentDays = 2
+		let listHotels = ref([])
+		let favorites = ref([])
+		let favoritesListLength = ref(0)
+		let isLoading = false
+		const initialState = {
+			location: 'Kyiv',
+			checkIn: currentCheckInDate,
+			days: currentDays
 		}
-	},
-	computed: {
-		favouritesLength() {
-			return Number(this.favorites.length)
+		function dateFormatHandler(date){
+			const [month, day, year] = date.toDateString().split(' ').slice(1)
+			return `${day} ${month} ${year}`
 		}
-	},
-	methods: {
-		addToFavourite(item) {
-			const copyItem = JSON.parse(JSON.stringify(item))
-			this.favorites.push(copyItem)
-		},
-		removeFromFavourite(item) {
-			this.favorites = this.favorites.filter(el => el.hotelId !== item.hotelId)
-			const itemToRemove = this.listHotels.find(el => el.hotelId === item.hotelId)
-			if (itemToRemove) {
-				itemToRemove.addedToFav = false
-			}
-		},
-		async searchQueryHandler(query) {
-			this.isLoading = true
-			const {location, checkIn, days} = query
-			this.currentLocation = location
-			this.currentCheckInDate = checkIn
-			this.currentDays = days
-			this.listHotels = await getHotels(query)
-			this.isLoading = false
-			this.listHandler()
-		},
-		listHandler() {
-			this.listHotels.forEach(hotel => Object.assign(hotel, {
-				checkInDate: this.dateFormatHandler(this.currentCheckInDate),
-				days: this.currentDays,
+		function listHandler(list) {
+			list.forEach(hotel => Object.assign(hotel, {
+				checkInDate: dateFormatHandler(currentCheckInDate),
+				days: currentDays,
 				addedToFav: false,
 			}))
-		},
-		favouritesListHandler(){
-			this.favorites = JSON.parse(localStorage.getItem('favourite-list')) || []
-			this.favorites.forEach(hotel => {
-				const item = this.listHotels.find(el => el.hotelId === hotel.hotelId)
+		}
+		const getInitialHotelsList = async (state) => {
+			listHotels.value = await getHotels(state)
+			listHandler(listHotels.value)
+		}
+		function favouritesListHandler(){
+			favorites = JSON.parse(localStorage.getItem('favourite-list')) || []
+			favorites.forEach(hotel => {
+				const item = listHotels.value.find(el => el.hotelId === hotel.hotelId)
 				if(item){
 					item.addedToFav = true
 				}
 			})
-		},
-		dateFormatHandler(date) {
-			const [month, day, year] = date.toDateString().split(' ').slice(1)
-			return `${day} ${month} ${year}`
-		},
-		logOut(){
-			this.$router.push({name: 'LoginView'})
+		}
+		async function searchQueryHandler(query) {
+			isLoading = true
+			const {location, checkIn, days} = query
+			currentLocation = location
+			currentCheckInDate = checkIn
+			currentDays = days
+			listHotels.value = await getHotels(query)
+			isLoading = false
+			listHandler(listHotels.value)
+		}
+
+		function addToFavourite(item) {
+			const copyItem = JSON.parse(JSON.stringify(item))
+			favorites.push(copyItem)
+			console.log('favorites:', favorites)
+			localStorage.setItem('favourite-list', JSON.stringify(favorites))
+			getFavouritesLength()
+		}
+		function removeFromFavourite(item) {
+			favorites = favorites.filter(el => el.hotelId !== item.hotelId)
+			const itemToRemove = listHotels.value.find(el => el.hotelId === item.hotelId)
+			if (itemToRemove) {
+				itemToRemove.addedToFav = false
+			}
+			localStorage.setItem('favourite-list', JSON.stringify(favorites))
+			getFavouritesLength()
+		}
+		const getFavouritesLength = () => {
+			console.log('favorites.length:', favorites.length)
+			favoritesListLength.value = favorites.length
+		}
+
+		const router = useRouter()
+		function logOut(){
+			router.push({name: 'LoginView'})
 			localStorage.removeItem('favourite-list')
 			localStorage.removeItem('geo-location')
 			localStorage.setItem('login-status', '0')
 		}
-	},
-	watch: {
-		favouritesLength() {
-			localStorage.setItem('favourite-list', JSON.stringify(this.favorites))
+
+		onMounted(() => {
+			getInitialHotelsList(initialState)
+			favouritesListHandler()
+		})
+
+		return {
+			currentLocation,
+			currentCheckInDate,
+			currentDays,
+			listHotels: listHotels || [],
+			favorites,
+			isLoading,
+			searchQueryHandler,
+			favoritesListLength,
+			addToFavourite,
+			removeFromFavourite,
+			logOut
 		}
-	}
+	},
 }
 </script>
 
@@ -136,7 +154,7 @@ export default {
 	opacity: 0;
 }
 .foggy {
-	position: absolute;
+	position: fixed;
 	top: 0;
 	right: 0;
 	bottom: 0;
