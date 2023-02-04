@@ -3,26 +3,21 @@
 </template>
 <script>
 
+import {useRouter } from "vue-router";
+import { onMounted, computed } from 'vue'
+import { getLocationCity, testFunction } from "./api";
 export default {
 	name: 'App',
-	async mounted() {
-		const loginStatus = localStorage.getItem('login-status')
-		if(!loginStatus || loginStatus !== '1'){
-			this.$router.push({name: 'LoginView'})
-		}
-		this.initialState.checkIn = new Date()
-		if(localStorage.getItem('geo-location')){
-			this.initialState.location = localStorage.getItem('geo-location')
-		}
-	},
-	data(){
-		return {
-			initialState: {
-				location: 'Kyiv',
-				checkIn: null,
-				days: 2
-			},
-		}
+	setup() {
+		const router = useRouter()
+		let location = 'Kyiv'
+		onMounted(async () => {
+			const loginStatus = localStorage.getItem('login-status')
+			if(!loginStatus || loginStatus !== '1'){
+				await router.push({name: 'LoginView'})
+			}
+			await testFunction()
+		})
 	},
 }
 </script>

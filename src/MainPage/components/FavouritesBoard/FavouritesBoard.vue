@@ -1,6 +1,7 @@
 <template>
 	<div class="favourites container">
 		<div class="favourites__title">Favourites</div>
+		<!--				переписать на > 1, когда 1 элемент - нечего фильтровать-->
 		<FiltersOptions
 				:no-favourites="!favouriteHotelsLength"
 				@change-filter-options="filter = $event"
@@ -24,7 +25,7 @@
 import ListHotels from "../../components/ListHotels.vue";
 import ItemHotel from "../../components/ItemHotel.vue";
 import FiltersOptions	from "./components/FiltersOptions.vue";
-import { watch, toRefs, computed } from 'vue'
+import { ref, computed } from 'vue'
 export default {
 	name: "FavouritesBoard",
 	components: {
@@ -35,23 +36,15 @@ export default {
 	props: {
 		favouriteHotels: {type: Array, required: true}
 	},
-	setup(props){
-
-	},
-	data(){
+	setup(props, { emit }){
+		const removeFromFavourites = item => emit('remove-from-favourite', item)
+		const favouriteHotelsLength = computed(() => props.favouriteHotels.length)
+		const filter = ref(null)
 		return {
-			filter: null
+			favouriteHotelsLength,
+			removeFromFavourites,
+			filter
 		}
-	},
-	computed: {
-		favouriteHotelsLength(){
-			return !!this.favouriteHotels.length
-		}
-	},
-	methods: {
-		removeFromFavourites(item){
-			this.$emit('remove-from-favourite', item)
-		},
 	},
 }
 </script>

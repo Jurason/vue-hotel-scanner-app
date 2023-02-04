@@ -28,46 +28,44 @@
 </template>
 
 <script>
-import { getLocationCity } from "../../api.js";
+import { onMounted, ref, computed } from "vue";
+import { testFunction } from "../../api";
+
 export default {
 	name: "SearchBoard",
 	emits: {
 		'search-query': payload => typeof payload === 'object'
 	},
-	async mounted(){
-		this.checkInDate = this.$root.$data.initialState.checkIn
-		this.days = this.$root.$data.initialState.days
-		if(!localStorage.getItem('geo-location')){
-			this.$root.$data.initialState.location = await getLocationCity()
-			localStorage.setItem('geo-location', this.$root.$data.initialState.location)
-		}
-		this.location = this.$root.$data.initialState.location
-	},
-	data(){
-		return {
-			location: null,
-			checkInDate: null,
-			days: 1,
-		}
-	},
-	computed: {
-		buttonDisabled(){
-			return !(this.checkInDate && this.days && this.location)
-		},
-	},
-	methods: {
-		searchQueryConfirm(){
-			if(!this.location || !this.days || !this.checkInDate){
+	setup(props, context){
+		const location = ref(null)
+		const checkInDate = ref(new Date())
+		const days = ref(3)
+		onMounted(async () => {
+			const { getState } = await testFunction()
+			location.value = getState ? location.value = localStorage.getItem('geo-location') : 'Kyiv'
+		})
+		const searchQueryConfirm = () => {
+			if(!location.value || !days.value || !checkInDate.value){
 				return
 			}
 			const searchQuery = {
-				location: this.location,
-				checkIn: this.checkInDate,
-				days: Number(this.days)
+				location: location.value,
+				checkIn: checkInDate.value,
+				days: Number(days.value)
 			}
-			this.$emit('search-query', searchQuery)
-		},
-	}
+			context.emit('search-query', searchQuery)
+		}
+
+		const buttonDisabled = computed(() => !(days.value && checkInDate.value && location.value))
+
+		return {
+			location,
+			checkInDate,
+			days,
+			searchQueryConfirm,
+			buttonDisabled
+		}
+	},
 }
 </script>
 

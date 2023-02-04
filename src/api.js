@@ -1,4 +1,18 @@
 import axios from 'axios'
+import {computed, ref} from "vue";
+
+export const testFunction = async () => {
+    const locationState = ref({ state: false })
+    if(!localStorage.getItem('geo-location')) {
+        const location = await getLocationCity()
+        localStorage.setItem('geo-location', String(location))
+        locationState.value.state = true
+    }
+    const getState = computed(() => locationState.value.state)
+    return {
+        getState
+    }
+}
 
 //get hotel information
 const apiHotels = (location, checkIn, checkOut, limit=10) => {

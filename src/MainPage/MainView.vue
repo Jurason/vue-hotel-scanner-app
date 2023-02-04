@@ -34,8 +34,8 @@ import SearchBoard from "./components/SearchBoard.vue";
 import FavouritesBoard from "./components/FavouritesBoard/FavouritesBoard.vue";
 import MainBoard from './components/MainBoard/MainBoard.vue';
 import SyncLoader from 'vue-spinner/src/SyncLoader.vue'
-import { getHotels } from '../api.js'
-import {ref, onMounted, computed, watch } from "vue";
+import {getHotels, testFunction} from '../api.js'
+import {ref, onMounted, computed, watch, reactive } from "vue";
 import { useRouter } from "vue-router";
 
 export default {
@@ -47,34 +47,34 @@ export default {
 		SyncLoader
 	},
 	setup(){
-		let currentLocation = 'Kyiv', currentCheckInDate = new Date(), currentDays = 2
-		let listHotels = ref([])
+		let currentLocation = ref('Kyiv'), currentCheckInDate = new Date(), currentDays = 2
+		const listHotels = ref([])
 		let favorites = ref([])
-		let favoritesListLength = ref(0)
 		let isLoading = false
-		const initialState = {
+		const defaultState = {
 			location: 'Kyiv',
 			checkIn: currentCheckInDate,
 			days: currentDays
+		}
+		const getHotelsList = async (query) => {
+			listHotels.value = await getHotels(query)
+			listHandler(listHotels.value)
 		}
 		function dateFormatHandler(date){
 			const [month, day, year] = date.toDateString().split(' ').slice(1)
 			return `${day} ${month} ${year}`
 		}
-		function listHandler(list) {
+		const listHandler = list => {
 			list.forEach(hotel => Object.assign(hotel, {
 				checkInDate: dateFormatHandler(currentCheckInDate),
 				days: currentDays,
 				addedToFav: false,
 			}))
 		}
-		const getInitialHotelsList = async (state) => {
-			listHotels.value = await getHotels(state)
-			listHandler(listHotels.value)
-		}
 		function favouritesListHandler(){
-			favorites = JSON.parse(localStorage.getItem('favourite-list')) || []
-			favorites.forEach(hotel => {
+			favorites.value = JSON.parse(localStorage.getItem('favourite-list')) || []
+			console.log('favorites.value:', favorites.value)
+			favorites.value.forEach(hotel => {
 				const item = listHotels.value.find(el => el.hotelId === hotel.hotelId)
 				if(item){
 					item.addedToFav = true
@@ -82,11 +82,11 @@ export default {
 			})
 		}
 		async function searchQueryHandler(query) {
-			isLoading = true
 			const {location, checkIn, days} = query
 			currentLocation = location
 			currentCheckInDate = checkIn
 			currentDays = days
+			isLoading = true
 			listHotels.value = await getHotels(query)
 			isLoading = false
 			listHandler(listHotels.value)
@@ -94,24 +94,19 @@ export default {
 
 		function addToFavourite(item) {
 			const copyItem = JSON.parse(JSON.stringify(item))
-			favorites.push(copyItem)
-			console.log('favorites:', favorites)
-			localStorage.setItem('favourite-list', JSON.stringify(favorites))
-			getFavouritesLength()
+			favorites.value.push(copyItem)
+			localStorage.setItem('favourite-list', JSON.stringify(favorites.value))
 		}
 		function removeFromFavourite(item) {
-			favorites = favorites.filter(el => el.hotelId !== item.hotelId)
+			favorites.value = favorites.value.filter(el => el.hotelId !== item.hotelId)
 			const itemToRemove = listHotels.value.find(el => el.hotelId === item.hotelId)
 			if (itemToRemove) {
 				itemToRemove.addedToFav = false
+				console.log('itemToRemove:', itemToRemove)
 			}
-			localStorage.setItem('favourite-list', JSON.stringify(favorites))
-			getFavouritesLength()
+			localStorage.setItem('favourite-list', JSON.stringify(favorites.value))
 		}
-		const getFavouritesLength = () => {
-			console.log('favorites.length:', favorites.length)
-			favoritesListLength.value = favorites.length
-		}
+		const favoritesListLength = computed(() => favorites.value.length)
 
 		const router = useRouter()
 		function logOut(){
@@ -121,8 +116,15 @@ export default {
 			localStorage.setItem('login-status', '0')
 		}
 
-		onMounted(() => {
-			getInitialHotelsList(initialState)
+		onMounted(async () => {
+			const { getState } = await testFunction()
+			if(getState){
+				const location = localStorage.getItem('geo-location')
+				await getHotelsList(Object.assign(defaultState, { location }))
+				currentLocation.value = location
+			} else {
+				await getHotelsList(defaultState)
+			}
 			favouritesListHandler()
 		})
 
