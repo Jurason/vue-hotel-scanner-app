@@ -29,7 +29,7 @@
 
 <script>
 import { onMounted, ref, computed } from "vue";
-import { testFunction } from "../../api";
+import { handleInitialStateGeoLocation } from "../../api";
 
 export default {
 	name: "SearchBoard",
@@ -37,12 +37,12 @@ export default {
 		'search-query': payload => typeof payload === 'object'
 	},
 	setup(props, context){
-		const location = ref(null)
+		const location = ref('')
 		const checkInDate = ref(new Date())
 		const days = ref(3)
 		onMounted(async () => {
-			const { getState } = await testFunction()
-			location.value = getState ? location.value = localStorage.getItem('geo-location') : 'Kyiv'
+			const { locationFromLocalStorage } = await handleInitialStateGeoLocation()
+			location.value = locationFromLocalStorage.value || 'Kyiv'
 		})
 		const searchQueryConfirm = () => {
 			if(!location.value || !days.value || !checkInDate.value){

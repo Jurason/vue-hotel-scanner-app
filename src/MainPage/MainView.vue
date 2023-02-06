@@ -34,8 +34,8 @@ import SearchBoard from "./components/SearchBoard.vue";
 import FavouritesBoard from "./components/FavouritesBoard/FavouritesBoard.vue";
 import MainBoard from './components/MainBoard/MainBoard.vue';
 import SyncLoader from 'vue-spinner/src/SyncLoader.vue'
-import {getHotels, testFunction} from '../api.js'
-import {ref, onMounted, computed, watch, reactive } from "vue";
+import { getHotels, handleInitialStateGeoLocation } from '../api.js'
+import { ref, onMounted, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 
 export default {
@@ -47,19 +47,24 @@ export default {
 		SyncLoader
 	},
 	setup(){
+		const router = useRouter()
+		function logOut(){
+			router.push({name: 'LoginView'})
+			localStorage.removeItem('favourite-list')
+			localStorage.removeItem('geo-location')
+			localStorage.setItem('login-status', '0')
+		}
+
 		let currentLocation = ref('Kyiv'), currentCheckInDate = new Date(), currentDays = 2
 		const listHotels = ref([])
 		let favorites = ref([])
 		let isLoading = false
 		const defaultState = {
-			location: 'Kyiv',
+			location: currentLocation,
 			checkIn: currentCheckInDate,
 			days: currentDays
 		}
-		const getHotelsList = async (query) => {
-			listHotels.value = await getHotels(query)
-			listHandler(listHotels.value)
-		}
+		// Handlers
 		function dateFormatHandler(date){
 			const [month, day, year] = date.toDateString().split(' ').slice(1)
 			return `${day} ${month} ${year}`
@@ -87,47 +92,37 @@ export default {
 			currentCheckInDate = checkIn
 			currentDays = days
 			isLoading = true
-			listHotels.value = await getHotels(query)
+			listHotels.value = [...await getHotels(query)]
 			isLoading = false
 			listHandler(listHotels.value)
 		}
-
+		// Actions
 		function addToFavourite(item) {
 			const copyItem = JSON.parse(JSON.stringify(item))
 			favorites.value.push(copyItem)
-			localStorage.setItem('favourite-list', JSON.stringify(favorites.value))
 		}
 		function removeFromFavourite(item) {
 			favorites.value = favorites.value.filter(el => el.hotelId !== item.hotelId)
 			const itemToRemove = listHotels.value.find(el => el.hotelId === item.hotelId)
-			if (itemToRemove) {
-				itemToRemove.addedToFav = false
-				console.log('itemToRemove:', itemToRemove)
-			}
-			localStorage.setItem('favourite-list', JSON.stringify(favorites.value))
+			if (itemToRemove) itemToRemove.addedToFav = false
 		}
 		const favoritesListLength = computed(() => favorites.value.length)
+		watch(favoritesListLength, () => localStorage.setItem('favourite-list', JSON.stringify(favorites.value)))
 
-		const router = useRouter()
-		function logOut(){
-			router.push({name: 'LoginView'})
-			localStorage.removeItem('favourite-list')
-			localStorage.removeItem('geo-location')
-			localStorage.setItem('login-status', '0')
+		const getHotelsList = async (query) => {
+			listHotels.value = [...await getHotels(query)]
+			listHandler(listHotels.value)
 		}
-
 		onMounted(async () => {
-			const { getState } = await testFunction()
-			if(getState){
-				const location = localStorage.getItem('geo-location')
-				await getHotelsList(Object.assign(defaultState, { location }))
-				currentLocation.value = location
+			const { locationFromLocalStorage } = await handleInitialStateGeoLocation()
+			if(locationFromLocalStorage){
+				await getHotelsList(Object.assign(defaultState, { location: locationFromLocalStorage.value }))
+				currentLocation.value = locationFromLocalStorage.value
 			} else {
 				await getHotelsList(defaultState)
 			}
 			favouritesListHandler()
 		})
-
 		return {
 			currentLocation,
 			currentCheckInDate,

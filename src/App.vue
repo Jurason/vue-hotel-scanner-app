@@ -5,18 +5,13 @@
 
 import {useRouter } from "vue-router";
 import { onMounted, computed } from 'vue'
-import { getLocationCity, testFunction } from "./api";
+import {handleInitialStateGeoLocation, loginStateHandler} from "./api";
 export default {
 	name: 'App',
 	setup() {
-		const router = useRouter()
-		let location = 'Kyiv'
 		onMounted(async () => {
-			const loginStatus = localStorage.getItem('login-status')
-			if(!loginStatus || loginStatus !== '1'){
-				await router.push({name: 'LoginView'})
-			}
-			await testFunction()
+			await loginStateHandler()
+			await handleInitialStateGeoLocation()
 		})
 	},
 }
