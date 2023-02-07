@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {computed, ref} from "vue";
+import {ref} from "vue";
 import {useRouter} from "vue-router";
 
 export const defaultValues = () => {
@@ -39,12 +39,13 @@ Date.prototype.addDays = function(days) {
     return date;
 }
 //get location
-export const handleInitialStateGeoLocation = async (config) => {
+export const handleInitialStateGeoLocation = async (config = {}) => {
+    const { defaultCity } = config
     const locationFromLocalStorage = ref('')
     if(!localStorage.getItem('geo-location')) {
         const location = await getLocationCity()
-        location ? localStorage.setItem('geo-location', String(location)) : localStorage.setItem('geo-location', 'Kyiv')
-        locationFromLocalStorage.value = location || 'Kyiv'
+        location ? localStorage.setItem('geo-location', String(location)) : localStorage.setItem('geo-location', (defaultCity || 'Kyiv'))
+        locationFromLocalStorage.value = location || (defaultCity || 'Kyiv')
     } else {
         locationFromLocalStorage.value = localStorage.getItem('geo-location')
     }
@@ -61,8 +62,8 @@ export const getLocationCity = async () => {
         })
         .then(res => res.data.city)
         .catch(err => {
-            console.log(err)
-            return 'Kyiv'
+            console.log('Error:', err)
+            // return 'Kyiv'
         })
 }
 function getPosition(){

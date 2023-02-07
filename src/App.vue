@@ -11,7 +11,7 @@ export default {
 	setup() {
 		onMounted(async () => {
 			await loginStateHandler()
-			await handleInitialStateGeoLocation()
+			await handleInitialStateGeoLocation({ defaultCity: 'Kyiv' })
 		})
 	},
 }
