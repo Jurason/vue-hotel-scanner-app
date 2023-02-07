@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import {onMounted, ref, computed, toRef, toRefs, reactive} from "vue";
+import {onMounted, computed, toRefs, reactive} from "vue";
 import {defaultValues, handleInitialStateGeoLocation} from "../../api";
 
 export default {
@@ -39,10 +39,6 @@ export default {
 	setup(props, context){
     const defaultState = toRefs(reactive(defaultValues()))
     const { location, checkIn: checkInDate, days } = defaultState
-    onMounted(async () => {
-			const { locationFromLocalStorage } = await handleInitialStateGeoLocation()
-      location.value = locationFromLocalStorage.value || location.value
-		})
 		const searchQueryConfirm = () => {
 			if(!location.value || !days.value || !checkInDate.value){
 				return
@@ -54,9 +50,11 @@ export default {
 			}
 			context.emit('search-query', searchQuery)
 		}
-
 		const buttonDisabled = computed(() => !(days.value && checkInDate.value && location.value))
-
+		onMounted(async () => {
+			const { locationFromLocalStorage } = await handleInitialStateGeoLocation()
+			location.value = locationFromLocalStorage.value || location.value
+		})
 		return {
 			location,
 			checkInDate,

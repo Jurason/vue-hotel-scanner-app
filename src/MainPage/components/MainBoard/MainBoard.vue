@@ -56,18 +56,20 @@ export default {
 	},
   setup(props, { emit }){
     const { hotelsList, location, favouriteCounter  } = toRefs(props)
+		const addToFavourite = item => {
+			emit('add-to-favourite', item)
+		}
+		const removeFromFavourite = item => {
+			emit('remove-from-favourite', item)
+		}
+
     const checkInDate = toRef(props, 'checkInDate')
-    const dateFormatHandler = date => {
+		const handledDate = computed(() => checkInDate.value ? dateFormatHandler(checkInDate.value) : '')
+		const dateFormatHandler = date => {
       const [month, day, year] = date.toDateString().split(' ').slice(1)
       return `${day} ${month} ${year}`
     }
-    const handledDate = computed(() => checkInDate.value ? dateFormatHandler(checkInDate.value) : '')
-    const addToFavourite = item => {
-      emit('add-to-favourite', item)
-    }
-    const removeFromFavourite = item => {
-      emit('remove-from-favourite', item)
-    }
+
     return {
       hotelsList,
       location,

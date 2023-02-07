@@ -47,37 +47,27 @@ export default {
 		SyncLoader
 	},
 	setup(){
+		let isLoading
 		let {
       location: currentLocation,
       checkIn: currentCheckInDate,
       days: currentDays
     } = toRefs(reactive(defaultValues()))
     const listHotels = ref([])
-		let favorites = ref([])
-		let isLoading
 
-		// Handlers
-		function dateFormatHandler(date){
-			const [month, day, year] = date.toDateString().split(' ').slice(1)
-			return `${day} ${month} ${year}`
+		const router = useRouter()
+		function logOut(){
+			router.push({name: 'LoginView'})
+			localStorage.removeItem('favourite-list')
+			localStorage.removeItem('geo-location')
+			localStorage.setItem('login-status', '0')
 		}
-		const listHandler = list => {
-			list.forEach(hotel => Object.assign(hotel, {
-				checkInDate: dateFormatHandler(currentCheckInDate.value),
-				days: currentDays.value,
-				addedToFav: false,
-			}))
-		}
-		async function searchQueryHandler(query) {
-			const {location, checkIn, days} = query
-			currentLocation.value = location
-			currentCheckInDate.value = checkIn
-			currentDays.value = days
-			isLoading = true
+		const getHotelsList = async (query) => {
 			listHotels.value = [...(await getHotels(query) || [])]
-			isLoading = false
 			listHandler(listHotels.value)
 		}
+
+		let favorites = ref([])
     function favouritesListHandler(){
       favorites.value = JSON.parse(localStorage.getItem('favourite-list')) || []
       favorites.value.forEach(hotel => {
@@ -99,15 +89,26 @@ export default {
 		const favoritesListLength = computed(() => favorites.value.length)
 		watch(favoritesListLength, () => localStorage.setItem('favourite-list', JSON.stringify(favorites.value)))
 
-    const router = useRouter()
-    function logOut(){
-      router.push({name: 'LoginView'})
-      localStorage.removeItem('favourite-list')
-      localStorage.removeItem('geo-location')
-      localStorage.setItem('login-status', '0')
-    }
-		const getHotelsList = async (query) => {
+    // Handlers
+		function dateFormatHandler(date){
+			const [month, day, year] = date.toDateString().split(' ').slice(1)
+			return `${day} ${month} ${year}`
+		}
+		const listHandler = list => {
+			list.forEach(hotel => Object.assign(hotel, {
+				checkInDate: dateFormatHandler(currentCheckInDate.value),
+				days: currentDays.value,
+				addedToFav: false,
+			}))
+		}
+		async function searchQueryHandler(query) {
+			const {location, checkIn, days} = query
+			currentLocation.value = location
+			currentCheckInDate.value = checkIn
+			currentDays.value = days
+			isLoading = true
 			listHotels.value = [...(await getHotels(query) || [])]
+			isLoading = false
 			listHandler(listHotels.value)
 		}
 

@@ -7,7 +7,7 @@
 
 <script>
 import FilterButton from "./FilterButton.vue";
-import {reactive, ref, toRef, watch} from "vue";
+import {reactive, toRef, watch} from "vue";
 export default {
 	name: "FiltersOptions",
 	components: {
@@ -30,7 +30,6 @@ export default {
         desc: false
       },
     })
-    const noFavourites = toRef(props, 'noFavourites')
     const filterOptionHandler = option => {
       if(noFavourites.value){
         return
@@ -53,6 +52,8 @@ export default {
     watch(filter, () => {
       emit('change-filter-options', filter)
     })
+
+		const noFavourites = toRef(props, 'noFavourites')
     watch(noFavourites, (newValue) => {
       if(newValue) filterOptionsDisabled()
     })

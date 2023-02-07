@@ -19,47 +19,53 @@
 </template>
 
 <script>
+import { useRouter } from "vue-router";
+import { ref, computed, watch } from 'vue'
+
 export default {
 	name: "LoginView",
-	data(){
-		return {
-			login: '',
-			loginValid: true,
-			password: null,
-			passwordValid: true,
+	setup(){
+		const login = ref('')
+		const loginValid = ref(true)
+		const loginIsValid = value => {
+			const emailValidationRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+			loginValid.value = emailValidationRegex.test(value);
 		}
-	},
-	computed: {
-		formIsValid(){
-			return !this.login || !this.password ? false : this.loginValid && this.passwordValid
+		watch(login, newValue => {
+			loginIsValid(newValue)
+		})
+
+		const password = ref(null)
+		const passwordValid = ref(true)
+		const passwordIsValid = value => {
+			passwordValid.value = !!(value && value.length >= 8)
 		}
-	},
-	methods: {
-		submitForm(){
-			if(this.loginValid && this.passwordValid){
-				this.$router.push({name: 'MainView'})
+		watch(password, newValue => {
+			passwordIsValid(newValue)
+		})
+
+		const router = useRouter()
+		const formIsValid = computed(() => {
+			return !login.value || !password.value ? false : loginValid.value && passwordValid.value
+		})
+		const submitForm = () => {
+			if(loginValid.value && passwordValid.value){
+				router.push({name: 'MainView'})
 				localStorage.setItem('login-status', '1')
 				//sql request to DB
 			} else {
 				console.log('Invalid validation!')
 			}
-		},
-		loginIsValid(value){
-			const emailValidationRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-			this.loginValid = emailValidationRegex.test(value);
-		},
-		passwordIsValid(value){
-			this.passwordValid = !!(value && value.length >= 8)
-		},
-	},
-	watch: {
-		login(newValue){
-			this.loginIsValid(newValue)
-		},
-		password(newValue){
-			this.passwordIsValid(newValue)
 		}
-	}
+		return {
+			login,
+			loginValid,
+			password,
+			passwordValid,
+			formIsValid,
+			submitForm
+		}
+	},
 }
 </script>
 
