@@ -34,8 +34,8 @@ import SearchBoard from "./components/SearchBoard.vue";
 import FavouritesBoard from "./components/FavouritesBoard/FavouritesBoard.vue";
 import MainBoard from './components/MainBoard/MainBoard.vue';
 import SyncLoader from 'vue-spinner/src/SyncLoader.vue'
-import { getHotels, handleInitialStateGeoLocation } from '../api.js'
-import { ref, onMounted, computed, watch } from "vue";
+import {defaultValues, getHotels, handleInitialStateGeoLocation} from '../api.js'
+import {ref, onMounted, computed, watch, toRefs, reactive} from "vue";
 import { useRouter } from "vue-router";
 
 export default {
@@ -54,16 +54,15 @@ export default {
 			localStorage.removeItem('geo-location')
 			localStorage.setItem('login-status', '0')
 		}
-
-		let currentLocation = ref('Kyiv'), currentCheckInDate = new Date(), currentDays = 2
-		const listHotels = ref([])
+    let {
+      location: currentLocation,
+      checkIn: currentCheckInDate,
+      days: currentDays
+    } = toRefs(reactive(defaultValues()))
+    const listHotels = ref([])
 		let favorites = ref([])
-		let isLoading = false
-		const defaultState = {
-			location: currentLocation,
-			checkIn: currentCheckInDate,
-			days: currentDays
-		}
+		let isLoading
+
 		// Handlers
 		function dateFormatHandler(date){
 			const [month, day, year] = date.toDateString().split(' ').slice(1)
@@ -71,14 +70,13 @@ export default {
 		}
 		const listHandler = list => {
 			list.forEach(hotel => Object.assign(hotel, {
-				checkInDate: dateFormatHandler(currentCheckInDate),
-				days: currentDays,
+				checkInDate: dateFormatHandler(currentCheckInDate.value),
+				days: currentDays.value,
 				addedToFav: false,
 			}))
 		}
 		function favouritesListHandler(){
 			favorites.value = JSON.parse(localStorage.getItem('favourite-list')) || []
-			console.log('favorites.value:', favorites.value)
 			favorites.value.forEach(hotel => {
 				const item = listHotels.value.find(el => el.hotelId === hotel.hotelId)
 				if(item){
@@ -88,11 +86,11 @@ export default {
 		}
 		async function searchQueryHandler(query) {
 			const {location, checkIn, days} = query
-			currentLocation = location
-			currentCheckInDate = checkIn
-			currentDays = days
+			currentLocation.value = location
+			currentCheckInDate.value = checkIn
+			currentDays.value = days
 			isLoading = true
-			listHotels.value = [...await getHotels(query)]
+			listHotels.value = [...(await getHotels(query) || [])]
 			isLoading = false
 			listHandler(listHotels.value)
 		}
@@ -110,16 +108,16 @@ export default {
 		watch(favoritesListLength, () => localStorage.setItem('favourite-list', JSON.stringify(favorites.value)))
 
 		const getHotelsList = async (query) => {
-			listHotels.value = [...await getHotels(query)]
+			listHotels.value = [...(await getHotels(query) || [])]
 			listHandler(listHotels.value)
 		}
 		onMounted(async () => {
 			const { locationFromLocalStorage } = await handleInitialStateGeoLocation()
 			if(locationFromLocalStorage){
-				await getHotelsList(Object.assign(defaultState, { location: locationFromLocalStorage.value }))
+        await getHotelsList(Object.assign(defaultValues(), { location: locationFromLocalStorage.value }))
 				currentLocation.value = locationFromLocalStorage.value
 			} else {
-				await getHotelsList(defaultState)
+				await getHotelsList(defaultValues())
 			}
 			favouritesListHandler()
 		})

@@ -2,6 +2,14 @@ import axios from 'axios'
 import {computed, ref} from "vue";
 import {useRouter} from "vue-router";
 
+export const defaultValues = () => {
+    return {
+        location: 'Kyiv',
+        checkIn: new Date(),
+        days: 12
+    }
+}
+
 // login state handler
 export const loginStateHandler = async () => {
     const router = useRouter()
