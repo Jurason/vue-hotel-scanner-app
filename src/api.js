@@ -20,7 +20,7 @@ export const loginStateHandler = async () => {
 }
 
 //get hotel information
-const hotelsApiUrl = (location, checkIn, checkOut, limit= 10) => {
+const hotelsApiUrl = (location, checkIn, checkOut, limit = 10) => {
     return `https://engine.hotellook.com/api/v2/cache.json?location=${location}&currency=usd&checkIn=${checkIn}&checkOut=${checkOut}&limit=${limit}`
 }
 export const getHotels = async query => {
@@ -62,7 +62,8 @@ export const getLocationCity = async () => {
         })
         .then(res => res.data.city)
         .catch(err => {
-            console.log('Error:', err)
+            console.log(err)
+            return 'Kyiv'
         })
 }
 function getPosition(){
