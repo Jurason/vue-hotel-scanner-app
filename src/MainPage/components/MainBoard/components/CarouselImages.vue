@@ -15,42 +15,42 @@
 <script>
 import { getCarouselImages } from "../../../../api.js";
 import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
+import {computed, onBeforeUnmount, onMounted, ref} from "vue";
 export default {
 	name: "CarouselImages",
 	components: {
 		PulseLoader
 	},
-	mounted(){
-		getCarouselImages().then(data => this.listImages = data)
-		this.$refs.carousel.addEventListener('wheel', this.scrollHandler)
-	},
-	beforeUnmount() {
-		this.$refs.carousel.removeEventListener('wheel', this.scrollHandler)
-	},
-	data(){
-		return {
-			listImages: [],
-			isLoaded: true,
-			imagesLoadedCounter: 0
-		}
-	},
-	computed: {
-		slicedList(){
-			return this.listImages.slice(24,30)
-		}
-	},
-	methods: {
-		scrollHandler(event){
-			event.preventDefault()
-			this.$refs.carousel.scrollLeft += event.deltaY
-		},
-		load(){
-			this.imagesLoadedCounter++
-			if(this.imagesLoadedCounter === this.slicedList.length){
-				this.isLoaded = false
-			}
-		}
-	}
+  setup(){
+    const listImages = ref([])
+    const isLoaded = ref(true)
+    const imagesLoadedCounter = ref(0)
+    const carousel = ref(null)
+    const slicedList = computed(() => listImages.value.slice(24,30))
+    const scrollHandler = event => {
+      event.preventDefault()
+      carousel.value.scrollLeft += event.deltaY
+    }
+    const load = () => {
+      imagesLoadedCounter.value++
+      if(imagesLoadedCounter.value === slicedList.value.length){
+        isLoaded.value = false
+      }
+    }
+    onMounted(() => {
+      getCarouselImages().then(data => listImages.value = [...data])
+      carousel.value.addEventListener('wheel', scrollHandler)
+    })
+    onBeforeUnmount(() => {
+      carousel.value.removeEventListener('wheel', scrollHandler)
+    })
+    return {
+      carousel,
+      isLoaded,
+      load,
+      slicedList
+    }
+  },
 }
 </script>
 

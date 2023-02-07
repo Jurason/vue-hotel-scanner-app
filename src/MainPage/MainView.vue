@@ -47,14 +47,7 @@ export default {
 		SyncLoader
 	},
 	setup(){
-		const router = useRouter()
-		function logOut(){
-			router.push({name: 'LoginView'})
-			localStorage.removeItem('favourite-list')
-			localStorage.removeItem('geo-location')
-			localStorage.setItem('login-status', '0')
-		}
-    let {
+		let {
       location: currentLocation,
       checkIn: currentCheckInDate,
       days: currentDays
@@ -75,15 +68,6 @@ export default {
 				addedToFav: false,
 			}))
 		}
-		function favouritesListHandler(){
-			favorites.value = JSON.parse(localStorage.getItem('favourite-list')) || []
-			favorites.value.forEach(hotel => {
-				const item = listHotels.value.find(el => el.hotelId === hotel.hotelId)
-				if(item){
-					item.addedToFav = true
-				}
-			})
-		}
 		async function searchQueryHandler(query) {
 			const {location, checkIn, days} = query
 			currentLocation.value = location
@@ -94,8 +78,16 @@ export default {
 			isLoading = false
 			listHandler(listHotels.value)
 		}
-		// Actions
-		function addToFavourite(item) {
+    function favouritesListHandler(){
+      favorites.value = JSON.parse(localStorage.getItem('favourite-list')) || []
+      favorites.value.forEach(hotel => {
+        const item = listHotels.value.find(el => el.hotelId === hotel.hotelId)
+        if(item){
+          item.addedToFav = true
+        }
+      })
+    }
+    function addToFavourite(item) {
 			const copyItem = JSON.parse(JSON.stringify(item))
 			favorites.value.push(copyItem)
 		}
@@ -107,10 +99,18 @@ export default {
 		const favoritesListLength = computed(() => favorites.value.length)
 		watch(favoritesListLength, () => localStorage.setItem('favourite-list', JSON.stringify(favorites.value)))
 
+    const router = useRouter()
+    function logOut(){
+      router.push({name: 'LoginView'})
+      localStorage.removeItem('favourite-list')
+      localStorage.removeItem('geo-location')
+      localStorage.setItem('login-status', '0')
+    }
 		const getHotelsList = async (query) => {
 			listHotels.value = [...(await getHotels(query) || [])]
 			listHandler(listHotels.value)
 		}
+
 		onMounted(async () => {
 			const { locationFromLocalStorage } = await handleInitialStateGeoLocation()
 			if(locationFromLocalStorage){

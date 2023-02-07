@@ -1,6 +1,6 @@
 <template>
 	<div class="hotels-list">
-		<div class="hotel-item" v-for="item in filteredList" :key="item.id">
+		<div class="hotel-item" v-for="item in filteredList.value" :key="item.id">
 			<slot name="item" :item="item"/>
 			<hr class="item__bottom-line">
 		</div>
@@ -8,51 +8,57 @@
 </template>
 
 <script>
+import { computed, toRef, toRefs } from "vue";
+
 export default {
 	name: "ListHotels",
 	props: {
 		hotelsList: {type: Array, required: true},
 		filterOptions: {type: Object, required: false}
 	},
-	computed: {
-		filteredList(){
-			if(!this.filterOptions){
-				return this.hotelsList
-			}
-			const filteredItems = this.hotelsList
-			if(this.filterOptions.byRating.asc){
-				filteredItems.sort((a,b) => a.priceAvg - b.priceAvg)
-			}
-			if(this.filterOptions.byRating.desc){
-				filteredItems.sort((a,b) => b.priceAvg - a.priceAvg)
-			}
-			if(this.filterOptions.byName.desc){
-				filteredItems.sort((a, b) => {
-					const nameA = a.hotelName.toUpperCase()
-					const nameB = b.hotelName.toUpperCase()
-					if (nameA < nameB) {
-						return -1;
-					}
-					if (nameA > nameB) {
-						return 1;
-					}
-				})
-			}
-			if(this.filterOptions.byName.asc){
-				filteredItems.sort((a, b) => {
-					const nameA = a.hotelName.toUpperCase()
-					const nameB = b.hotelName.toUpperCase()
-					if (nameA < nameB) {
-						return 1;
-					}
-					if (nameA > nameB) {
-						return -1;
-					}
-				})
-			}
-			return filteredItems
-		}
-	}
+  setup(props){
+    const { hotelsList } = toRefs(props)
+    const filterOptions = toRef(props, 'filterOptions')
+    const filteredList = computed(() => {
+      if(!filterOptions?.value){
+        return hotelsList
+      }
+      if(filterOptions.value.byRating.asc){
+        hotelsList.value.sort((a,b) => a.priceAvg - b.priceAvg)
+      }
+      if(filterOptions.value.byRating.desc){
+        hotelsList.value.sort((a,b) => b.priceAvg - a.priceAvg)
+      }
+      if(filterOptions.value.byName.desc){
+        hotelsList.value.sort((a, b) => {
+          const nameA = a.hotelName.toUpperCase()
+          const nameB = b.hotelName.toUpperCase()
+          if (nameA < nameB) {
+            return -1;
+          }
+          if (nameA > nameB) {
+            return 1;
+          }
+        })
+      }
+      if(filterOptions.value.byName.asc){
+        hotelsList.value.sort((a, b) => {
+          const nameA = a.hotelName.toUpperCase()
+          const nameB = b.hotelName.toUpperCase()
+          if (nameA < nameB) {
+            return 1;
+          }
+          if (nameA > nameB) {
+            return -1;
+          }
+        })
+      }
+      return hotelsList
+    })
+    return {
+      filteredList
+    }
+  },
 }
 </script>
 

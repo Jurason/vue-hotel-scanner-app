@@ -40,6 +40,7 @@
 import CarouselImages from "./components/CarouselImages.vue";
 import ListHotels from "../ListHotels.vue";
 import ItemHotel from "../ItemHotel.vue";
+import {computed, toRef, toRefs} from "vue";
 export default {
 	name: "MainBoard",
 	components: {
@@ -53,23 +54,29 @@ export default {
 		checkInDate: {type: Object, required: false, default: '01 June 2022'},
 		favouriteCounter: {type: Number, required: true, default: 0}
 	},
-	computed: {
-		handledDate(){
-			return this.checkInDate ? this.dateFormatHandler(this.checkInDate) : ''
-		},
-	},
-	methods: {
-		addToFavourite(item){
-			this.$emit('add-to-favourite', item)
-		},
-		removeFromFavourite(item){
-			this.$emit('remove-from-favourite', item)
-		},
-		dateFormatHandler(date) {
-			const [month, day, year] = date.toDateString().split(' ').slice(1)
-			return `${day} ${month} ${year}`
-		},
-	},
+  setup(props, { emit }){
+    const { hotelsList, location, favouriteCounter  } = toRefs(props)
+    const checkInDate = toRef(props, 'checkInDate')
+    const dateFormatHandler = date => {
+      const [month, day, year] = date.toDateString().split(' ').slice(1)
+      return `${day} ${month} ${year}`
+    }
+    const handledDate = computed(() => checkInDate.value ? dateFormatHandler(checkInDate.value) : '')
+    const addToFavourite = item => {
+      emit('add-to-favourite', item)
+    }
+    const removeFromFavourite = item => {
+      emit('remove-from-favourite', item)
+    }
+    return {
+      hotelsList,
+      location,
+      favouriteCounter,
+      handledDate,
+      addToFavourite,
+      removeFromFavourite
+    }
+  },
 }
 </script>
 

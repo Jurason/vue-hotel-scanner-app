@@ -7,6 +7,7 @@
 
 <script>
 import FilterButton from "./FilterButton.vue";
+import {reactive, ref, toRef, watch} from "vue";
 export default {
 	name: "FiltersOptions",
 	components: {
@@ -18,54 +19,49 @@ export default {
 	emits: {
 		'change-filter-options': (payload) => typeof payload === 'object'
 	},
-	data(){
-		return {
-			filter: {
-				byRating: {
-					asc: false,
-					desc: false
-				},
-				byName: {
-					asc: false,
-					desc: false
-				},
-			}
-		}
-	},
-	methods: {
-		filterOptionHandler(option){
-			if(this.noFavourites){
-				return
-			}
-			if(!this.filter[option].asc && !this.filter[option].desc){
-				this.filter[option].asc = true
-				Object.keys(this.filter).filter(key => key !== option)
-						.forEach(key => Object.keys(this.filter[key])
-								.forEach(innerKey => this.filter[key][innerKey] = false))
-				return
-			}
-			this.filter[option].asc = !this.filter[option].asc
-			this.filter[option].desc = !this.filter[option].desc
-		},
-		filterOptionsDisabled(){
-			Object.keys(this.filter)
-					.forEach(key => Object.keys(this.filter[key])
-							.forEach(innerKey => this.filter[key][innerKey] = false))
-		}
-	},
-	watch: {
-		filter: {
-			deep: true,
-			handler(){
-				this.$emit('change-filter-options', this.filter)
-			}
-		},
-		noFavourites(newValue){
-			if(newValue){
-				this.filterOptionsDisabled()
-			}
-		}
-	}
+  setup(props, { emit }){
+    const filter = reactive({
+      byRating: {
+        asc: false,
+        desc: false
+      },
+      byName: {
+        asc: false,
+        desc: false
+      },
+    })
+    const noFavourites = toRef(props, 'noFavourites')
+    const filterOptionHandler = option => {
+      if(noFavourites.value){
+        return
+      }
+      if(!filter[option].asc && !filter[option].desc){
+        filter[option].asc = true
+        Object.keys(filter).filter(key => key !== option)
+            .forEach(key => Object.keys(filter[key])
+                .forEach(innerKey => filter[key][innerKey] = false))
+        return
+      }
+      filter[option].asc = !filter[option].asc
+      filter[option].desc = !filter[option].desc
+    }
+    const filterOptionsDisabled = () => {
+      Object.keys(filter)
+          .forEach(key => Object.keys(filter[key])
+              .forEach(innerKey => filter[key][innerKey] = false))
+    }
+    watch(filter, () => {
+      emit('change-filter-options', filter)
+    })
+    watch(noFavourites, (newValue) => {
+      if(newValue) filterOptionsDisabled()
+    })
+    return {
+      filter,
+      filterOptionHandler,
+      filterOptionsDisabled
+    }
+  },
 }
 </script>
 

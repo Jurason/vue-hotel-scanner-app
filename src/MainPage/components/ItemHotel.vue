@@ -22,6 +22,7 @@
 
 <script>
 import StarRatingComponent from "../../components/StarRatingComponent.vue";
+import {computed, toRefs} from "vue";
 
 export default {
 	name: "ItemHotel",
@@ -31,25 +32,27 @@ export default {
 	props: {
 		item: {type: Object, required: true},
 	},
-	emits: {
-		'add-to-favourite': payload => typeof payload === 'object',
-		'remove-from-favourite': payload => typeof payload === 'object',
-	},
-	computed: {
-		isAddedToFav(){
-			return this.item.addedToFav
-		}
-	},
-	methods: {
-		clickHandler(){
-			this.item.addedToFav = !this.item.addedToFav
-			if(this.isAddedToFav){
-				this.$emit('add-to-favourite', this.item)
-				return
-			}
-			this.$emit('remove-from-favourite', this.item)
-		}
-	}
+  emits: {
+    'add-to-favourite': payload => typeof payload === 'object',
+    'remove-from-favourite': payload => typeof payload === 'object',
+  },
+  setup(props, { emit }){
+    const { item } = toRefs(props)
+    const isAddedToFav = computed(() => item.value.addedToFav)
+    const clickHandler = () => {
+      item.value.addedToFav = !item.value.addedToFav
+      if(isAddedToFav.value){
+        emit('add-to-favourite', item.value)
+        return
+      }
+      emit('remove-from-favourite', item.value)
+    }
+    return {
+      item,
+      clickHandler,
+      isAddedToFav
+    }
+  },
 }
 </script>
 <style lang="scss">
